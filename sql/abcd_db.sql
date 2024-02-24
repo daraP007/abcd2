@@ -51,6 +51,28 @@ INSERT INTO `artists` (`user_id`, `profile_picture`, `description`, `country`, `
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `nominations`
+--
+
+CREATE TABLE `nominations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `category` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `name` varchar(150) COLLATE utf8mb4_general_ci NOT NULL,
+  `description` varchar(2000) COLLATE utf8mb4_general_ci NOT NULL,
+  `nominator` varchar(150) COLLATE utf8mb4_general_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `nominations`
+--
+
+INSERT INTO `nominations` (`category`, `name`, `description`, `nominator`) VALUES
+('Shero', 'Maggie', 'She\'s a good dog', 'Chris_HARDCODE'),
+('Hero', 'Melvin', 'He\'s a bad cat', 'Chris_HARDCODE');
+
+--
 -- Table structure for table `dresses`
 --
 
@@ -702,6 +724,12 @@ ALTER TABLE `users`
 --
 ALTER TABLE `artists`
   MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `nominations`
+--
+ALTER TABLE `nominations`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
 -- AUTO_INCREMENT for table `dresses`
