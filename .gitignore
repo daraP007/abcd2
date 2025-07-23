@@ -1,7 +1,7 @@
 error_log
-db_configuration.php
-db_configuration.php
-*.PNG
-*.JPG
-*.JPEG
-*.GIF
+# db_configuration.php
+
+# *.PNG
+# *.JPG
+# *.JPEG
+# *.GIF
