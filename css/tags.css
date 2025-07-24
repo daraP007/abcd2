@@ -1,0 +1,146 @@
+/* 
+    ICS 325 (summer 2025)
+    Final Project
+    Team DOLPHIN  🐬
+*/
+
+#title {
+    text-align: center;
+    color: #000080;
+    font-family: 'Kanit';
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 70px;
+    text-shadow: 2px 2px 4px #cec6bd;
+}
+
+/* added for section heading */
+#section-heading {
+    text-align: center;
+    color: #000080;
+    font-family: 'Kanit', sans-serif;
+    text-transform: none; 
+    font-weight: bold;
+    font-size: 32px;
+}
+
+/* added for instructions */
+.instruction {
+    text-align: center;
+    color: #000080;
+    font-family: 'Kanit', sans-serif;
+    font-weight: normal;
+    font-size: 16px; 
+}
+
+#todayFont {
+        text-align: center;
+    color: #ff0000;
+    font-family: 'Kanit';
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 30px;
+    text-shadow: 2px 2px 4px #cec6bd;
+}
+
+#toggle {
+    color: 	#4397fb;
+}
+
+#toggle:hover {
+    color: #467bc7
+}
+
+thead input {
+    width: 100%;
+}
+
+.thumbnailSize{
+    height: 100px;
+    width: 100px;
+    transition:transform 0.25s ease;
+}
+
+.thumbnailSize:hover {
+    -webkit-transform:scale(3.5);
+    transform:scale(3.5);
+}
+
+#buttonContainer button {
+
+    border-radius: 5px;
+    border: 1px solid #138808;
+    background-color: white;
+
+}
+
+#buttonContainer button {
+
+    color: #138808;
+
+}
+
+
+#buttonContainer button:hover{
+
+    background-color: #138808;
+    border: 1px solid white;
+    color: white !important;
+
+}
+
+#buttonContainer button:hover {
+
+    color: white;
+
+}
+
+#buttonContainer a {
+
+    text-decoration: none;
+    color: #138808;
+
+}
+
+#buttonContainer a:hover {
+
+    text-decoration: none;
+    color: white;
+
+}
+
+#buttonContainer {
+
+    display: flex;
+    justify-content: center;
+
+}
+
+.toggles {
+
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: row;
+
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+    gap: 60px;
+}
+
+.btn {
+    padding: 10px 20px;
+    text-decoration: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}

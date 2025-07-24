@@ -140,3 +140,7 @@ if ($result->num_rows > 0) {
         ?>
     </div>
 </div>
+<footer class="page-footer text-center">
+    <br>
+    <p>© Summer 2025 Team DOLPHIN 🐬</p>
+</footer>

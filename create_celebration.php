@@ -60,5 +60,9 @@ include('header.php');
   <div class="form-group text-center mt-4">
     <input class="btn btn-primary" type="submit" name="submit" value="Create Celebration">
   </div>
+  <footer class="page-footer text-center">
+    <br>
+    <p>© Summer 2025 Team DOLPHIN 🐬</p>
+</footer>
 </form>
 

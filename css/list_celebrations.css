@@ -14,6 +14,25 @@
     text-shadow: 2px 2px 4px #cec6bd;
 }
 
+/* added for section heading */
+#section-heading {
+    text-align: center;
+    color: #000080;
+    font-family: 'Kanit', sans-serif;
+    text-transform: none; 
+    font-weight: bold;
+    font-size: 32px;
+}
+
+/* added for instructions */
+.instruction {
+    text-align: center;
+    color: #000080;
+    font-family: 'Kanit', sans-serif;
+    font-weight: normal;
+    font-size: 16px; 
+}
+
 #todayFont {
         text-align: center;
     color: #ff0000;
