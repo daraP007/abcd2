@@ -1,0 +1,137 @@
+/*
+    ICS 325 (summer 2025)
+    Final Project
+    Team DOLPHIN  🐬
+*/
+
+.body {
+    height: 1800px;
+    background: white;
+    background-image: radial-gradient(black 1px, transparent 0);
+    background-size: 60px 60px;
+    background-position: -19px -19px;
+    right: 0;
+}
+
+.head {
+    font-family: "Times New Roman";
+    color: black;
+    text-align: center;
+    font-size: 70px;
+}
+
+.containerTitle {
+    display: block;
+    width: 50%;
+    margin: auto;
+    height: 150px;
+    flex-direction: column;
+    text-align: center;
+    justify-content: space-around;
+    margin-top: 100px;
+    background-color: white;
+}
+
+.headTwo {
+    text-transform: uppercase;
+    color: #000080;
+    height: 100px;
+    font-size: 70px;
+    font-family: 'Kanit';
+    font-weight: bold;
+    text-shadow: 2px 2px 4px #cec6bd;
+    letter-spacing: 1rem;
+}
+
+.title {
+    font-family: "Kanit";
+    color: #00BAFF;
+    font-size: 1.5rem;
+    width: 100%;
+    text-transform: uppercase;
+    font-weight: bold;
+    z-index: 0;
+    display: inline-block;
+}
+
+.words {
+    font-family: "Kanit";
+    white-space: pre-wrap;
+    width: 100%;
+    align-content: left;
+    text-align: justify;
+}
+
+.container {
+    padding: 50px !important;
+    display: flex;
+    width: 100%;
+    flex-direction: row-reverse;
+    background-color: white;
+    z-index: -1;
+}
+
+.containerImage {
+    display: flex;
+    flex-direction: column;
+    border: 5px solid black;
+    margin-left: 50px;
+    border-radius: 3px;
+}
+
+.containerText {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.image {
+    height: 700px;
+}
+
+strong {
+    position: relative;
+}
+
+strong::before {
+    background-color: #caf6bd;
+    content: "";
+    position: absolute;
+    width: calc(100% + 4px);
+    height: 60%;
+    left: -2px;
+    bottom: 0;
+    z-index: -1;
+    transform: rotate(-2deg);
+}
+
+.pageNav {
+    text-align: center;
+    width: fit-content;
+}
+
+.pageNavContainer {
+    margin: auto;
+    text-align: center;
+    justify-content: center;
+    margin-top: 50px;
+}
+
+.pageLinksContainer {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+a.pageButton:hover {
+    color: white;
+    background-color: #138808;
+}
+
+a.pageButton {
+    padding: 8px;
+    color: #138808;
+    border: 1px solid grey;
+}
