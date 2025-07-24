@@ -8,6 +8,13 @@
 $page_title = 'Project ABCD > Manage Tags';
 include('header.php');
 
+session_start();
+
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
+    header("Location: index.php");
+    exit();
+}
+
 $tags_file = 'abcd_tags.txt';
 $backup_file = 'previous_abcd_tags.txt';
 $tags = '';
