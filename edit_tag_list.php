@@ -37,6 +37,8 @@ include('header.php');
             <a href="manage_tags.php" class="btn btn-secondary">← Back to Manage Tags</a>
             <button type="submit" class="btn btn-primary">Save Tag List</button>
         </div>
+
+
     </form>
 </div>
 
