@@ -2,8 +2,11 @@ Sheroes
 Heroes
 Sarees
 Weddings
-Christa
-is pretty
+Traditions
+Womenswear
+Menswear
+Folk
+Dances
 Costumes
 Professions
 Scientists
@@ -11,4 +14,3 @@ Changemakers
 Freedom Fighters
 Armed Forces
 Characters
-Custom

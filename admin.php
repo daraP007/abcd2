@@ -1,7 +1,17 @@
 
 <?php 
-    ob_start();
-    session_start();
+ob_start();
+session_start();
+
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
+    header("Location: index.php");
+    exit();
+}
+
+    /* already added in login.php
+    $_SESSION['username'] = $username;
+    $_SESSION['role'] = $user_role; //
+    */
 
     // Check if the user is logged in and has admin privileges
     if ($_SESSION['role'] != 'admin'){
@@ -13,6 +23,15 @@
     include('header.php'); 
     
     ob_end_flush();
+?>
+<?php
+session_start();
+
+// heck for logged-in user
+if (isset($_SESSION['username']) && isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+    echo '<a href="admin_celebrations.php">🎉 Celebrations</a> | ';
+    echo '<a href="manage_tags.php">🏷️ Tags</a><br><br>';
+}
 ?>
 
 <html>
