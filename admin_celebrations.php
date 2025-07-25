@@ -32,6 +32,7 @@ $GLOBALS['data'] = mysqli_query($db, $query);
 
 <br><br>
 <div class="container-fluid">
+    <br>
     <h2 id="title">Today's Celebrations</h2><br>
 
     <div id="buttonContainer" style="margin-bottom: 20px;">

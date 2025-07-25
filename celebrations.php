@@ -42,7 +42,7 @@ $result = $conn->query($sql);
 </head>
 <br><br>
 <div class="container-fluid">
-
+    <br>
     <h2 id="title">Today's Celebrations</h2><br>
 <!-- This portion will display the celebration of the day depending on the machine's time or selected time -->
 
