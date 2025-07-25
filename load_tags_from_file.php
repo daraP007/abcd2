@@ -23,30 +23,30 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Ensure the uploads directory exists and is writable
-$target_file = 'abcd_tags.txt';
-$backup_file = 'previous_tags_list.txt';
+// ensure the target file and backup file paths are correct
+$target_file = __DIR__ . '/reports/abcd_tags.txt';
+$backup_file = __DIR__ . '/reports/previous_tags_list.txt';
 
 if (isset($_FILES['tag_file']) && $_FILES['tag_file']['error'] == UPLOAD_ERR_OK) {
-    // Step 1: Backup existing file if it exists
+    // backup the existing file if it exists
     if (file_exists($target_file)) {
         rename($target_file, $backup_file);
     }
 
-    // Step 2: Move new file to destination
+    // move the uploaded file to the target location
     if (move_uploaded_file($_FILES['tag_file']['tmp_name'], $target_file)) {
-        // Step 3: Open file and update database
+        // read the file and update the database
         $tags = file($target_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
         if (!$conn) {
             die("Database connection failed: " . mysqli_connect_error());
         }
 
-        // Step 4: Clear existing table
+        // clear existing tags in the database
         $clear_sql = "TRUNCATE TABLE dresses_tags_tbl";
         mysqli_query($conn, $clear_sql);
 
-        // Step 5: Insert tags from file
+        // insert new tags into the database
         $stmt = $conn->prepare("INSERT INTO dresses_tags_tbl (tag_name, last_updated) VALUES (?, NOW())");
         foreach ($tags as $tag) {
             $trimmed = trim($tag);
@@ -56,18 +56,7 @@ if (isset($_FILES['tag_file']) && $_FILES['tag_file']['error'] == UPLOAD_ERR_OK)
             }
         }
 
-        /*
-        $stmt = $conn->prepare("INSERT INTO dresses_tags_tbl (tag_name) VALUES (?)");
-        foreach ($tags as $tag) {
-            $trimmed = trim($tag);
-            if (!empty($trimmed)) {
-                $stmt->bind_param("s", $trimmed);
-                $stmt->execute();
-            }
-        }
-            */
-
-        // Step 6: Add 'Custom' tag if not already in file
+        // add 'Custom' tag if not already present
         if (!in_array('Custom', $tags)) {
             $custom = 'Custom';
             $stmt->bind_param("s", $custom);

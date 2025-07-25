@@ -4,26 +4,22 @@
     Team DOLPHIN  🐬
 -->
 
-<!-- 
-    ICS 325 (summer 2025)
-    Final Project
-    Team DOLPHIN  🐬
--->
-
 <?php
 $page_title = 'Project ABCD > Manage Tags';
 include('header.php');
 
-$tags_file = 'abcd_tags.txt';
-$backup_file = 'previous_abcd_tags.txt';
+// file paths
+$tags_file = __DIR__ . '/reports/abcd_tags.txt';
+$backup_file = __DIR__ . '/reports/previous_abcd_tags.txt';
 $tags = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['tags'])) {
         if (file_exists($tags_file)) {
-            copy($tags_file, $backup_file); // Make a backup
+            copy($tags_file, $backup_file); // make a backup
         }
 
+        // success message
         file_put_contents($tags_file, $_POST['tags']);
         $tags = $_POST['tags'];
         $message = "Tag list updated successfully.";
@@ -44,6 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <div class="container mt-4">
+    <br><br>
     <h2 id="title">Manage Tags</h2>
 
     <?php if (!empty($message)): ?>

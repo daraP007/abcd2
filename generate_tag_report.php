@@ -23,21 +23,21 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Load allowed tags
-$allowed_tags_file = 'abcd_tags.txt';
+// Load allowed tags list
+$allowed_tags_file = __DIR__ . '/reports/abcd_tags.txt';
 $allowed_tags = [];
 
 if (file_exists($allowed_tags_file)) {
     $allowed_tags = array_map('trim', file($allowed_tags_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES));
 }
 
-$allowed_tags = array_map('strtolower', $allowed_tags); // Normalize to lowercase
-$allowed_tags[] = 'custom'; // Add 'custom' category for unrecognized tags
+$allowed_tags = array_map('strtolower', $allowed_tags); // convert to lowercase
+$allowed_tags[] = 'custom'; // add 'Custom' tag
 
-// Initialize tag count
+// initialize tag counts
 $tag_counts = array_fill_keys($allowed_tags, 0);
 
-// Query dresses table
+// query dresses table
 $sql = "SELECT key_words FROM dresses";
 $result = mysqli_query($conn, $sql);
 
@@ -60,8 +60,8 @@ if ($result) {
     exit();
 }
 
-// Write to CSV
-$csv_path = 'tag_report.csv';
+// write to CSV
+$csv_path = __DIR__ . '/reports/tag_report.csv';
 $csv_file = fopen($csv_path, 'w');
 fputcsv($csv_file, ['Tag', 'Count']);
 
@@ -80,6 +80,7 @@ fclose($csv_file);
 </head>
 
 <div class="container mt-5">
+    <br><br>
     <h2 id="title">Tag Usage Report</h2>
     <table class="table table-striped table-bordered mt-4">
         <thead>
@@ -95,8 +96,9 @@ fclose($csv_file);
         </tbody>
     </table>
 
-    <div class="mt-4">
-        <a href="tag_report.csv" class="btn btn-primary" download>Download CSV Report</a>
+    <div class="d-flex justify-content-between align-items-center mt-4">
+        <a href="manage_tags.php" class="btn btn-secondary">← Back to Manage Tags</a>
+        <a href="reports/tag_report.csv" class="btn btn-primary" download>Download CSV Report</a>
     </div>
 </div>
 

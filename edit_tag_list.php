@@ -25,7 +25,7 @@ include('header.php');
         <div class="form-group">
         <label for="tag_list">Edit Tags (one per line):</label>
         <textarea name="tag_list" id="tag_list" class="form-control" rows="12" required><?php
-            $file = 'abcd_tags.txt';
+            $file = __DIR__ . '/reports/abcd_tags.txt';
             if (file_exists($file)) {
                 echo htmlspecialchars(file_get_contents($file));
             } else {
