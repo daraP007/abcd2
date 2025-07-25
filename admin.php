@@ -1,12 +1,6 @@
 
 <?php 
-ob_start();
-session_start();
 
-if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
-    header("Location: index.php");
-    exit();
-}
 
     /* already added in login.php
     $_SESSION['username'] = $username;
@@ -14,9 +8,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
     */
 
     // Check if the user is logged in and has admin privileges
-    if ($_SESSION['role'] != 'admin'){
-        header('Location:index.php'); 
-    }
+    
 
     require 'bin/functions.php';
     require 'db_configuration.php';

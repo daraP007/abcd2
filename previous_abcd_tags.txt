@@ -1,6 +1,7 @@
 Sheroes
 Heroes
-Test1Weddings
+Sarees
+Weddings
 Traditions
 Womenswear
 Menswear
@@ -13,4 +14,3 @@ Changemakers
 Freedom Fighters
 Armed Forces
 Characters
-Custom
