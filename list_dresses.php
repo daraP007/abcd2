@@ -31,7 +31,6 @@ $GLOBALS['data'] = mysqli_query($db, $query);
 
 ?>
 
-
 <?php $page_title = 'Project ABCD > dresses'; ?>
 
 <?php include('header.php'); 
@@ -41,11 +40,13 @@ $GLOBALS['data'] = mysqli_query($db, $query);
 
 <head>
 <link href="css/list_dresses.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300&display=swap" rel="stylesheet">
   
 </head>
+
+
 
 <!-- Page Content -->
 <br><br>
@@ -223,11 +224,20 @@ $GLOBALS['data'] = mysqli_query($db, $query);
         </table>
     </div>
 </div>
+<!-- csv upload form for admin -->
+<?php if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') { ?>
+    <h1 id="section-heading">Upload CSV to Update Dress Keywords</h1>
+    <form action="upload_dresses_keywords.php" method="POST" enctype="multipart/form-data">
+        <input type="file" name="csvFile" accept=".csv" required>
+        <button type="submit">Upload and Update</button>
+    </form>
+<?php } ?>
 
 <!-- /.container -->
 <!-- Footer -->
 <footer class="page-footer text-center">
     <p>Created for ICS 325 Summer Project "Team Alligators"</p>
+    <p>© Summer 2025 Updated by Team DOLPHIN 🐬</p><br>
 </footer>
 
 <!--JQuery-->
