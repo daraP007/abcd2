@@ -16,14 +16,23 @@
     
     ob_end_flush();
 ?>
+
+<!-- admin check for admin.php -->
 <?php
+session_start(); 
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    echo "<script>
+            alert('Unauthorized access.');
+            window.location.href = 'index.php';
+          </script>";
+    exit;
+}
+?>
+
+<?php
+
 session_start();
 
-// heck for logged-in user
-if (isset($_SESSION['username']) && isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
-    echo '<a href="admin_celebrations.php">🎉 Celebrations</a> | ';
-    echo '<a href="manage_tags.php">🏷️ Tags</a><br><br>';
-}
 ?>
 
 <html>
@@ -67,8 +76,7 @@ if (isset($_SESSION['username']) && isset($_SESSION['role']) && $_SESSION['role'
 </div>
 
 <footer class="page-footer text-center">
-    <br>
-    <p>© Summer 2025 Team DOLPHIN 🐬</p>
+    <br><p>© Summer 2025 [modified by] Team DOLPHIN 🐬</p><br>
 </footer>
      
 </body>

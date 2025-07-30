@@ -6,7 +6,6 @@
 
 <?php
 
-
 require 'db_configuration.php';
 $page_title = 'Project ABCD > Admin-Celebrations';
 
@@ -19,6 +18,17 @@ $GLOBALS['data'] = mysqli_query($db, $query);
 $query = "SELECT id, title, description, resource_type, celebration_type, celebration_date, tags, image_name, resource_url FROM celebrations_tbl";
 
 $GLOBALS['data'] = mysqli_query($db, $query);
+?>
+
+<?php
+session_start(); 
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    echo "<script>
+            alert('Unauthorized access.');
+            window.location.href = 'index.php';
+          </script>";
+    exit;
+}
 ?>
 
 <?php include('header.php'); ?>
