@@ -1,10 +1,10 @@
-<!-- 
-    ICS 325 (summer 2025)
-    Final Project
-    Team DOLPHIN  🐬
--->
-
 <?php
+session_start(); 
+
+    // ICS 325 (summer 2025)
+    // Final Project
+    // Team DOLPHIN  🐬
+
 
 require 'db_configuration.php';
 $page_title = 'Project ABCD > Admin-Celebrations';
@@ -21,7 +21,7 @@ $GLOBALS['data'] = mysqli_query($db, $query);
 ?>
 
 <?php
-session_start(); 
+
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     echo "<script>
             alert('Unauthorized access.');

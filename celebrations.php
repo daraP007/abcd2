@@ -1,10 +1,8 @@
-<!-- 
-    ICS 325 (summer 2025)
-    Final Project
-    Team DOLPHIN  🐬
--->
-
 <?php
+
+    // ICS 325 (summer 2025)
+    // Final Project
+    // Team DOLPHIN  🐬
 
 ini_set('display_errors', 1);
 error_reporting(E_ALL);

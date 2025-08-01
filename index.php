@@ -1,54 +1,57 @@
 <?php
+session_start();
 
-    if(!isset($_SESSION)) 
-    { 
-        session_start();
-    } 
+    // ICS 325 (summer 2025)
+    // Final Project
+    // Team DOLPHIN  🐬
+
 
 require 'bin/functions.php';
 require 'db_configuration.php';
-include('chatbot.php');
-include('header.php');
 
+// — pagination inputs —
+$limit  = isset($_GET['limit']) && in_array((int)$_GET['limit'], [20,50,100])
+          ? (int)$_GET['limit'] : 20;
+$page   = isset($_GET['page'])  && (int)$_GET['page'] > 0
+          ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $limit;
 
-/*$sort_array=['name', 'category', 'type' , 'state_name' , 'status'];
-     
-this is commented out section
+// — sort inputs —
+$sort     = $_GET['sort'] ?? 'ID';
+$allowed  = ['ID'=>'id','Name'=>'name','Category'=>'category','Type'=>'type'];
+if (! array_key_exists($sort, $allowed)) {
+    $sort = 'ID';
+}
+$sort_column = $allowed[$sort];
 
-        $r = @$_GET['option'];
-      
-        $num = count($sort_array);
+// — total count for pagination —
+$countRes   = mysqli_query($db, "SELECT COUNT(*) AS total FROM dresses");
+$totalRow   = mysqli_fetch_assoc($countRes);
+$totalPages = (int)ceil($totalRow['total'] / $limit);
 
-        for ($i=0 ; $i < $num ; $i++) {
-
-          if ($sort_array[$i] == $r){
-            $sort_array[$i] = "$sort_array[$i]" .'"'. ' selected = "selected" ' ;
-            }
-        else $sort_array[$i] = "$sort_array[$i]";
-        }
-
-echo '<div text-align: left>
-<label>Sort by</label> 
-<form name="sort" method = get action = "" text-align: left>
-<select id="sel_id" name="option"  onchange="this.form.submit();">
-    <option value="'.$sort_array[0].'">Name</option>
-    <option value="'.$sort_array[1].'">Category</option>
-    <option value="'.$sort_array[2].'">Type</option>
-    <option value="'.$sort_array[3].'">State</option>
-    <option value="'.$sort_array[4].'">Status</option>
-</select>
-</form>
-</div>
-'
-*/
+// — Data query with ORDER BY and LIMIT/OFFSET —
+$sql = "
+    SELECT
+        id, name, type, category,
+        state_name, key_words,
+        image_url, status, notes, tag_line
+    FROM dresses
+    ORDER BY {$sort_column} ASC
+    LIMIT {$offset}, {$limit}
+";
+$res_data = mysqli_query($db, $sql);
 ?>
+
+
+<!-- header.php included before HTML output -->
+<?php include('header.php'); ?>
 
 <html>
 
 <head>
-    <title>ABCD</title>
-    <link href="css/index.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+<title>ABCD</title>
+<link href="css/index.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./css/responsive_style.css">
@@ -167,93 +170,86 @@ echo '<div text-align: left>
     $result = mysqli_query($db, $all_dresses_sql);
     $num_results = mysqli_num_rows($result);
 
-    if($dresses_count > $num_results){
-        $no_of_records_per_page = 1000000;
-    }
-    else{
-        $no_of_records_per_page = $dresses_count;
-    }
-    
-    $total_pages = ceil($num_results / $no_of_records_per_page);
 
-    if (!isset($_GET['page'])) {
-        $page = 1;
-    }
-    else {
-        $page = $_GET['page'];
-        if ($page < 1){
-            $page = 1;
-        } elseif ($page > $total_pages){
-            $page = $total_pages;
-        }
-    }
+// — Pagination Inputs —
+$limit  = isset($_GET['limit'])  && in_array((int)$_GET['limit'], [20,50,100])
+            ? (int)$_GET['limit'] : 20;
+$page   = isset($_GET['page'])   && (int)$_GET['page'] > 0
+            ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $limit;
 
-    $page_first_result = ($page - 1) * $no_of_records_per_page; 
-   
+// — Total count for pagination —
+$countRes  = mysqli_query($db, "SELECT COUNT(*) AS total FROM dresses");
+$totalRow  = mysqli_fetch_assoc($countRes);
+$total     = (int)$totalRow['total'];
+$totalPages = (int)ceil($total / $limit);
 
-    $sort_param = isset($_GET['sort']) ? $_GET['sort'] : 'id'; // default to 'id' if no sort param is given
-    $sql = "SELECT * FROM dresses ORDER BY ".$sort_param." ASC LIMIT " . $page_first_result . ',' . $no_of_records_per_page;
-
- 
-    if(!empty($all_sheroes)){
-        $shero_query = implode(",", $all_sheroes);
-        $sql = "SELECT * FROM dresses WHERE id IN ($shero_query) ORDER BY CASE id ";
-        foreach ($all_sheroes as $index => $id){
-            $sql .= "WHEN $id THEN ". ($index + 1)." ";
-        }
-        $sql .="END;";
-    }
-    if(isset($_POST["id"])){
-        $sql = "SELECT * FROM dresses ORDER BY id ASC LIMIT " . $page_first_result . ',' . $no_of_records_per_page;
-    }
-    if(isset($_POST["name"])){
-        $sql = "SELECT * FROM dresses ORDER BY name ASC LIMIT " . $page_first_result . ',' . $no_of_records_per_page;
-    }
-    if(isset($_POST["state"])){
-        $sql = "SELECT * FROM dresses ORDER BY state_name ASC LIMIT " . $page_first_result . ',' . $no_of_records_per_page;
-    }
-    if(isset($_POST["category"])){
-       $sql = "SELECT * FROM dresses ORDER BY category ASC LIMIT " . $page_first_result . ',' . $no_of_records_per_page;
-    }
-    if(isset($_POST["type"])){
-        $sql = "SELECT * FROM dresses ORDER BY type ASC LIMIT " . $page_first_result . ',' . $no_of_records_per_page;
-    }
+// — Data query with ORDER BY id and LIMIT/OFFSET —
+$sql = "
+    SELECT
+      id, name, type, category,
+      state_name, key_words,
+      image_url, status, notes, tag_line
+    FROM dresses
+    ORDER BY id ASC
+    LIMIT {$offset}, {$limit}
+";
+$res_data = mysqli_query($db, $sql);
 
 
-    $res_data = mysqli_query($db, $sql);
+
+
+// $res_data = mysqli_query($db, $sql);
 
     ?>
     
     <h1 class="mainTitle">Welcome to Project ABCD</h1>
-    <h2 class="subTitle">A Bite of Culture in Dresses</h2>
-    <h2 class="selectTitle">Select a dress to know more about it</h2><br>
-    
-    <span class="pageLinksContainer">
-    <span class="dressSorting">
+    <h2 class="subTitle">A Bite of Culture in Dresses</h2><br>
+    <h1 id="section-heading">Select a dress to know more about it</h1><br>
 
-    <form action="index.php" method="get">
-        <button class="sortLink" type="submit" name="sort" value="ID">I.D.</button>
-        <button class="sortLink" type="submit" name="sort" value="name">Name</button>
-        <button class="sortLink" type="submit" name="sort" value="category">Category</button>
-        <button class="sortLink" type="submit" name="sort" value="type">Type</button>
-        <button class="sortLink" type="submit" name="sort" value="state_name">State</button>
-        <button class="sortLink" type="submit" name="sort" value= "shero">Sheroes</button>
+    <!-- sort block updated -->
+    <div class="controlsForm">
+
+    <!-- 1) SHOW dropdown (preserves current sort) -->
+    <form method="get" action="index.php" class="limitForm" style="display:inline-block; margin-right: 1rem;">
+        <label for="limitSelect">Show:</label>
+        <select name="limit" id="limitSelect" class="sortLink" onchange="this.form.submit()">
+            <option value="20"  <?= $limit === 20  ? 'selected' : '' ?>>20</option>
+            <option value="50"  <?= $limit === 50  ? 'selected' : '' ?>>50</option>
+            <option value="100" <?= $limit === 100 ? 'selected' : '' ?>>100</option>
+        </select>
+        <!-- preserve the sort when changing limit -->
+        <input type="hidden" name="sort" value="<?= htmlspecialchars($sort) ?>">
     </form>
 
+    <!-- 2) SORT BY links -->
+    <span class="sortLinksContainer" style="display:inline-block; margin-right: 1rem;">
+        <label>Sort by:</label>
+        <?php foreach (['ID','Name','Category','Type'] as $opt): ?>
+        <a href="?limit=<?= $limit ?>&sort=<?= $opt ?>&page=1"class="sortLink<?= $sort === $opt ? ' active' : '' ?>"
+      >
+        <?= $opt ?>
+        </a>
+        <?php endforeach; ?>
     </span>
-    <span class="pageNavConatiner">
-        <tr class="pageNav">
-            <a class="pageLink pageFirst pageButton" href="?page=1&sort=<?php echo $Sort_string; ?>"><< First</a>
-            <td class="<?php if($page <= 1){ echo 'disabled'; } ?>">
-                <a class="pageLink pageMid pageButton" href="<?php if($page <= 1){ echo '#'; } else { echo "?page=".($page - 1). "&sort=".$Sort_string; } ?>">Prev</a>
-            </td>
-            <td class="<?php if($page >= $total_pages_sql){ echo 'disabled'; } ?>">
-                <a class="pageLink pageMid pageButton" href="<?php if($page >= $total_pages){ echo '#'; } else { echo "?page=".($page + 1). "&sort=".$Sort_string; } ?>">Next</a>
-            </td>
-                <a class="pageLink pageMid pageLast pageButton" href="?page=<?php echo $total_pages; ?>&sort=<?php echo $Sort_string; ?>">Last >></a>
-            </tr>
-</span>
-</span>
+
+  <!-- 3) PAGINATION LINKS -->
+  <span class="pageNavContainer" style="display:inline-block;">
+    <?php if ($page > 1): ?>
+      <a
+        href="?limit=<?= $limit ?>&sort=<?= $sort ?>&page=<?= $page - 1 ?>"
+        class="pageButton"
+      >&laquo; Previous</a>
+    <?php endif; ?>
+
+    <?php if ($page < $totalPages): ?>
+      <a
+        href="?limit=<?= $limit ?>&sort=<?= $sort ?>&page=<?= $page + 1 ?>"
+        class="pageButton"
+      >Next &raquo;</a>
+    <?php endif; ?>
+  </span>
+</div>
 
     <?php
 
@@ -380,6 +376,9 @@ echo '<div text-align: left>
 </script>
     </div>
     
+    <footer class="page-footer text-center">
+        <br><p>© Summer 2025 Updated by Team DOLPHIN 🐬</p><br>
+    </footer>
 
 </body>
 

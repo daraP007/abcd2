@@ -1,10 +1,9 @@
-<!-- 
-    ICS 325 (summer 2025)
-    Final Project
-    Team DOLPHIN  🐬
--->
-
 <?php
+
+    // ICS 325 (summer 2025)
+    // Final Project
+    // Team DOLPHIN  🐬
+
 include('header.php');
 include_once 'db_configuration.php';
 $page_title = 'Project ABCD > Display Celebration';

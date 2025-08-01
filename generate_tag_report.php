@@ -1,10 +1,9 @@
-<!-- 
-    ICS 325 (summer 2025)
-    Final Project
-    Team DOLPHIN  🐬
--->
-
 <?php
+
+    // ICS 325 (summer 2025)
+    // Final Project
+    // Team DOLPHIN  🐬
+
 $page_title = 'Project ABCD > Tag Report';
 include('header.php');
 include('db_configuration.php');
