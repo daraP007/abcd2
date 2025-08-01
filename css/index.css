@@ -10,6 +10,16 @@ body {
 
 }
 
+/* added for section heading */
+#section-heading {
+    text-align: center;
+    color: #000080;
+    font-family: 'Kanit', sans-serif;
+    text-transform: none; 
+    font-weight: bold;
+    font-size: 32px;
+}
+
 .contentContainer {
 
     width: fit-content;
@@ -150,4 +160,39 @@ button.sortLink {
 #sorting {
     display: inline;
     font-weight: bold;
+}
+
+/* dropdown style match */
+select.sortLink {
+  background-color: orangered;
+  color: white;
+  border: 1px solid white !important;
+  padding: 8px;
+  font-family: 'Kanit', sans-serif;
+  font-weight: normal;
+  cursor: pointer;
+}
+select.sortLink:hover {
+  background-color: white;
+  color: orangered;
+  border: 1px solid orangered !important;
+}
+
+/* add a little spacing between controls */
+.controlsForm {
+  display: flex;
+  align-items: left;
+  justify-content: center;
+  gap: 1rem; /* space out the elements */
+  padding: 1rem 0;
+}
+
+.controlsForm label {
+  font-weight: bold;
+  font-family: 'Kanit', sans-serif;
+}
+
+/* tighten up the page button spacing */
+.pageNavContainer a.pageButton {
+  margin: 0 4px;
 }
