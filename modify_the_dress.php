@@ -97,7 +97,16 @@ if (isset($_POST['id'])){
                 WHERE id = '$id'";
 
                 mysqli_query($db, $sql);
-                
+
+ //  TAG ASSIGNMENT LOGIC After saving dress info without image 
+ mysqli_query($db, "DELETE FROM dresses_tags_tbl WHERE dress_id = '$id'");
+ if (isset($_POST['tags'])) {
+     foreach ($_POST['tags'] as $tag) {
+         $tag = mysqli_real_escape_string($db, $tag);
+         mysqli_query($db, "INSERT INTO dresses_tags_tbl (dress_id, tag) VALUES ('$id', '$tag')");
+     }
+ }
+         
                 header('location: list_dresses.php?dressUpdated=Success');
                 }
     }else{
