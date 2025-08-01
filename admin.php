@@ -1,10 +1,5 @@
 <?php 
-
-
-    /* already added in login.php
-    $_SESSION['username'] = $username;
-    $_SESSION['role'] = $user_role; //
-    */
+session_start();
 
     // Check if the user is logged in and has admin privileges
     
@@ -17,6 +12,7 @@
 ?>
 
 <!-- admin check for admin.php -->
+<!-- 7-31-2025: moved session_start() to the top of the file to ensure session is started before any output -->
 <?php
 session_start(); 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
@@ -26,12 +22,6 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
           </script>";
     exit;
 }
-?>
-
-<?php
-
-session_start();
-
 ?>
 
 <html>
