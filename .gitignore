@@ -1,6 +1,13 @@
+# error log ignored
 error_log
-# db_configuration.php
 
+# XAMPP files ignored
+# XAMPP configuration file ignored
+db_configuration.php
+
+## image files ignored for time being
+# Uncomment the following lines to ignore image files
+#  and not push them to the repository.
 # *.PNG
 # *.JPG
 # *.JPEG
