@@ -1,12 +1,14 @@
 <?php
+session_start();
+
+require 'bin/functions.php';
+require_once 'db_configuration.php';
+
 
     // ICS 325 (summer 2025)
     // Final Project
     // Team DOLPHIN  🐬
 
-include('header.php');
-include_once 'db_configuration.php';
-$page_title = 'Project ABCD > Display Celebration';
 ?>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,6 +16,12 @@ $page_title = 'Project ABCD > Display Celebration';
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./css/display_celebration.css">
 <link rel="stylesheet" href="./css/responsive_style.css">
+
+<?php 
+include('header.php'); 
+$page_title = 'Project ABCD > Display Celebration';
+?>
+
 
 <?php
 if (isset($_GET['fav_status'])) {

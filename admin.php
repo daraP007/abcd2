@@ -1,12 +1,8 @@
 <?php 
 session_start();
 
-    // Check if the user is logged in and has admin privileges
-    
-
-    require 'bin/functions.php';
-    require 'db_configuration.php';
-    include('header.php'); 
+require 'bin/functions.php';
+require_once 'db_configuration.php';
     
     ob_end_flush();
 ?>
@@ -14,7 +10,6 @@ session_start();
 <!-- admin check for admin.php -->
 <!-- 7-31-2025: moved session_start() to the top of the file to ensure session is started before any output -->
 <?php
-session_start(); 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     echo "<script>
             alert('Unauthorized access.');
@@ -22,6 +17,11 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
           </script>";
     exit;
 }
+?>
+
+<?php
+$page_title = 'Project ABCD > Admin';
+include('header.php'); 
 ?>
 
 <html>

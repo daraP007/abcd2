@@ -1,13 +1,8 @@
 <?php
 session_start();
 
-    // ICS 325 (summer 2025)
-    // Final Project
-    // Team DOLPHIN  🐬
-
-
 require 'bin/functions.php';
-require 'db_configuration.php';
+require_once 'db_configuration.php';
 
 // — pagination inputs —
 $limit  = isset($_GET['limit']) && in_array((int)$_GET['limit'], [20,50,100])

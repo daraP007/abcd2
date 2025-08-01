@@ -1,19 +1,20 @@
 <?php
+session_start();
+
+require 'bin/functions.php';
+require_once 'db_configuration.php';
+
+// Database connection info
+$conn = new mysqli(DATABASE_HOST, DATABASE_USER, DATABASE_PASSWORD, DATABASE_DATABASE);
 
     // ICS 325 (summer 2025)
     // Final Project
     // Team DOLPHIN  🐬
 
-include('db_configuration.php');
-
-// Database connection info
-$host = "localhost";
-$user = "root";
-$pass = "";
-$db = "abcd_db";
-
-// create connection
-$conn = new mysqli($host, $user, $pass, $db);
+// error reporting
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 // check connection
 if ($conn->connect_error) {

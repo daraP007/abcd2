@@ -1,15 +1,16 @@
 <?php
-session_start(); 
+session_start();
+
+require 'bin/functions.php';
+require_once 'db_configuration.php';
 
     // ICS 325 (summer 2025)
     // Final Project
     // Team DOLPHIN  🐬
 
-
-require 'db_configuration.php';
-$page_title = 'Project ABCD > Admin-Celebrations';
-
+// error reporting
 ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 $query = "SELECT * FROM celebrations_tbl";
@@ -18,6 +19,11 @@ $GLOBALS['data'] = mysqli_query($db, $query);
 $query = "SELECT id, title, description, resource_type, celebration_type, celebration_date, tags, image_name, resource_url FROM celebrations_tbl";
 
 $GLOBALS['data'] = mysqli_query($db, $query);
+?>
+
+<?php
+$page_title = 'Project ABCD > Admin-Celebrations';
+include('header.php'); 
 ?>
 
 <?php
@@ -30,8 +36,6 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     exit;
 }
 ?>
-
-<?php include('header.php'); ?>
 
 <head>
     <link rel="stylesheet" type="text/css" href="css/list_celebrations.css">
@@ -74,7 +78,6 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
                         <td><?php echo htmlspecialchars($row['title']); ?></td>
                         <td><?php echo htmlspecialchars($row['celebration_date']); ?></td>
                         <td><?php echo htmlspecialchars($row['description']); ?></td>
-                        <!-- FIX THIS 'display_celebration.php' does not exist yet. -->
                         <td>
                             <a class="btn btn-success btn-sm" href="display_celebration.php?id=<?php echo $row['id']; ?>">Display</a>
                         </td>

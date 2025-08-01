@@ -1,12 +1,8 @@
 <?php
-
-if(!isset($_SESSION)) 
-{ 
-    session_start(); 
-} 
+session_start();
 
 require 'bin/functions.php';
-require 'db_configuration.php';
+require_once 'db_configuration.php';
 
 
 //Read cookies for description and did you know length, use defauts if not set.
