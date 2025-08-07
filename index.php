@@ -4,6 +4,16 @@ session_start();
 require 'bin/functions.php';
 require_once 'db_configuration.php';
 
+// Fetch tags for filter
+$tags_group = mysqli_query($db,"select distinct tag_name from dresses_tags_tbl order by tag_name asc");
+
+$tags = [];
+if ($tags_group && mysqli_num_rows($tags_group) > 0){
+    while ($row = mysqli_fetch_assoc($tags_group)){
+        $tags[] = $row['tag_name'];
+    }
+}
+
 // — pagination inputs —
 $limit  = isset($_GET['limit']) && in_array((int)$_GET['limit'], [20,50,100])
           ? (int)$_GET['limit'] : 20;
@@ -226,6 +236,17 @@ $res_data = mysqli_query($db, $sql);
         <?= $opt ?>
         </a>
         <?php endforeach; ?>
+    </span>
+
+<!--Filter By Tags -->
+    <span class="sortLinksContainer" style="display:inline-block; margin-right: 1rem;">
+    <label>Filter by:</label>
+        <?php foreach ($tags as $tag): ?>
+        <a href="?tag=<?= urlencode($tag) ?>&limit=<?= $limit ?>&sort=<?= $sort ?>&page=1"
+           class="filterLink<?= isset($_GET['tag']) && $_GET['tag'] === $tag ? ' active' : '' ?>">
+            <?= htmlspecialchars($tag) ?>
+        </a>
+    <?php endforeach; ?>
     </span>
 
   <!-- 3) PAGINATION LINKS -->
