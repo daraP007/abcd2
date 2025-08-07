@@ -14,7 +14,6 @@ $conn = new mysqli(DATABASE_HOST, DATABASE_USER, DATABASE_PASSWORD, DATABASE_DAT
 // error reporting
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
-include('db_configuration.php');
 
 // Check connection
 if ($conn->connect_error) {

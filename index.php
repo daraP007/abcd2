@@ -5,8 +5,8 @@ require 'bin/functions.php';
 require_once 'db_configuration.php';
 
 // — pagination inputs —
-$limit  = isset($_GET['limit']) && in_array((int)$_GET['limit'], [20,50,100])
-          ? (int)$_GET['limit'] : 20;
+$limit  = isset($_GET['limit']) && in_array((int)$_GET['limit'], [10,20,50,75,100])
+          ? (int)$_GET['limit'] : 10;
 $page   = isset($_GET['page'])  && (int)$_GET['page'] > 0
           ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
@@ -167,8 +167,8 @@ $res_data = mysqli_query($db, $sql);
 
 
 // — Pagination Inputs —
-$limit  = isset($_GET['limit'])  && in_array((int)$_GET['limit'], [20,50,100])
-            ? (int)$_GET['limit'] : 20;
+$limit  = isset($_GET['limit'])  && in_array((int)$_GET['limit'], [10,20,50,75,100])
+            ? (int)$_GET['limit'] : 10;
 $page   = isset($_GET['page'])   && (int)$_GET['page'] > 0
             ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
@@ -192,25 +192,23 @@ $sql = "
 $res_data = mysqli_query($db, $sql);
 
 
-
-
-// $res_data = mysqli_query($db, $sql);
-
-    ?>
+?>
     
-    <h1 class="mainTitle">Welcome to Project ABCD</h1>
-    <h2 class="subTitle">A Bite of Culture in Dresses</h2><br>
-    <h1 id="section-heading">Select a dress to know more about it</h1><br>
+<h1 class="mainTitle">Welcome to Project ABCD</h1>
+<h2 class="subTitle">A Bite of Culture in Dresses</h2><br>
+<h1 id="section-heading">Select a dress to know more about it</h1><br>
 
-    <!-- sort block updated -->
-    <div class="controlsForm">
+<!-- sort block updated -->
+<div class="controlsForm">
 
     <!-- 1) SHOW dropdown (preserves current sort) -->
     <form method="get" action="index.php" class="limitForm" style="display:inline-block; margin-right: 1rem;">
         <label for="limitSelect">Show:</label>
         <select name="limit" id="limitSelect" class="sortLink" onchange="this.form.submit()">
+            <option value="10"  <?= $limit === 10  ? 'selected' : '' ?>>10</option>
             <option value="20"  <?= $limit === 20  ? 'selected' : '' ?>>20</option>
             <option value="50"  <?= $limit === 50  ? 'selected' : '' ?>>50</option>
+            <option value="75"  <?= $limit === 75  ? 'selected' : '' ?>>75</option>
             <option value="100" <?= $limit === 100 ? 'selected' : '' ?>>100</option>
         </select>
         <!-- preserve the sort when changing limit -->
@@ -221,29 +219,22 @@ $res_data = mysqli_query($db, $sql);
     <span class="sortLinksContainer" style="display:inline-block; margin-right: 1rem;">
         <label>Sort by:</label>
         <?php foreach (['ID','Name','Category','Type'] as $opt): ?>
-        <a href="?limit=<?= $limit ?>&sort=<?= $opt ?>&page=1"class="sortLink<?= $sort === $opt ? ' active' : '' ?>"
-      >
-        <?= $opt ?>
-        </a>
+            <a href="?limit=<?= $limit ?>&sort=<?= $opt ?>&page=1" class="sortLink<?= $sort === $opt ? ' active' : '' ?>">
+                <?= $opt ?>
+            </a>
         <?php endforeach; ?>
     </span>
 
   <!-- 3) PAGINATION LINKS -->
-  <span class="pageNavContainer" style="display:inline-block;">
-    <?php if ($page > 1): ?>
-      <a
-        href="?limit=<?= $limit ?>&sort=<?= $sort ?>&page=<?= $page - 1 ?>"
-        class="pageButton"
-      >&laquo; Previous</a>
-    <?php endif; ?>
+    <span class="pageNavContainer" style="display:inline-block;">
+        <?php if ($page > 1): ?>
+            <a href="?limit=<?= $limit ?>&sort=<?= $sort ?>&page=<?= $page - 1 ?>" class="pageButton">&laquo; Previous</a>
+        <?php endif; ?>
 
-    <?php if ($page < $totalPages): ?>
-      <a
-        href="?limit=<?= $limit ?>&sort=<?= $sort ?>&page=<?= $page + 1 ?>"
-        class="pageButton"
-      >Next &raquo;</a>
-    <?php endif; ?>
-  </span>
+        <?php if ($page < $totalPages): ?>
+            <a href="?limit=<?= $limit ?>&sort=<?= $sort ?>&page=<?= $page + 1 ?>" class="pageButton">Next &raquo;</a>
+        <?php endif; ?>
+    </span>
 </div>
 
     <?php
