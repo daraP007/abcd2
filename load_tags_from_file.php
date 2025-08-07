@@ -2,7 +2,7 @@
 session_start();
 
 require 'bin/functions.php';
-require_once 'db_configuration.php';
+require_once 'db_configuration.php'; // include database configuration, removed secondary include
 
 // Database connection info
 $conn = new mysqli(DATABASE_HOST, DATABASE_USER, DATABASE_PASSWORD, DATABASE_DATABASE);
