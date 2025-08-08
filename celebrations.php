@@ -10,8 +10,9 @@ $conn = new mysqli(DATABASE_HOST, DATABASE_USER, DATABASE_PASSWORD, DATABASE_DAT
     // Final Project
     // Team DOLPHIN  🐬
 
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+// error reporting
+//ini_set('display_errors', 1);
+//error_reporting(E_ALL);
 
 $page_title = 'Project ABCD > Celebrations';
 include('header.php');
