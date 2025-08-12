@@ -1,5 +1,5 @@
 <?php
-require_once 'bin/debug_config.php'; //uncomment if debugging is needed
+// require_once 'bin/debug_config.php'; //uncomment if debugging is needed
 
 session_start();
 
