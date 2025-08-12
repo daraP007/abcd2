@@ -5,6 +5,9 @@ error_log
 # XAMPP configuration file ignored
 db_configuration.php
 
+# .DS_Store files ignored
+.DS_Store
+
 ## image files ignored for time being
 # Uncomment the following lines to ignore image files
 #  and not push them to the repository.

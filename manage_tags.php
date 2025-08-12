@@ -1,11 +1,16 @@
 <?php
+// require_once 'bin/debug_config.php'; //uncomment if debugging is needed
 
-    // ICS 325 (summer 2025)
-    // Final Project
-    // Team DOLPHIN  🐬
+session_start(); // unnecessary in this context, but included for consistency
 
-$page_title = 'Project ABCD > Manage Tags';
-include('header.php');
+// admin check and redirect
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    echo "<script>
+            alert('Unauthorized access. Admin privileges are required.');
+            window.location.href = 'loginForm.php';
+          </script>";
+    exit;
+}
 
 // file paths
 $tags_file = __DIR__ . '/reports/abcd_tags.txt';
@@ -28,6 +33,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $tags = file_get_contents($tags_file);
     }
 }
+
+// set page title before including header
+$page_title = 'Project ABCD > Manage Tags';
+include('header.php');
 ?>
 
 <head>

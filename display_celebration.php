@@ -1,14 +1,14 @@
 <?php
-session_start();
+// require_once 'bin/debug_config.php'; //uncomment if debugging is needed
+
+session_start(); // unnecessary in this context, but included for consistency
 
 require 'bin/functions.php';
 require_once 'db_configuration.php';
 
-
-    // ICS 325 (summer 2025)
-    // Final Project
-    // Team DOLPHIN  🐬
-
+// set page title before including header
+$page_title = 'Project ABCD > Display Celebration';
+include('header.php'); 
 ?>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,12 +16,6 @@ require_once 'db_configuration.php';
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./css/display_celebration.css">
 <link rel="stylesheet" href="./css/responsive_style.css">
-
-<?php 
-include('header.php'); 
-$page_title = 'Project ABCD > Display Celebration';
-?>
-
 
 <?php
 if (isset($_GET['fav_status'])) {

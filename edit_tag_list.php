@@ -1,10 +1,18 @@
 <?php
+// require_once 'bin/debug_config.php'; //uncomment if debugging is needed
 
-    // ICS 325 (summer 2025)
-    // Final Project
-    // Team DOLPHIN  🐬
+session_start();
 
-$page_title = 'Edit Tag List';
+// admin check and redirect
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    echo "<script>
+            alert('Unauthorized access. Admin privileges are required.');
+            window.location.href = 'loginForm.php';
+          </script>";
+    exit;
+}
+// set page title before including header
+$page_title = 'Project ABCD > Edit Tag List';
 include('header.php');
 ?>
 

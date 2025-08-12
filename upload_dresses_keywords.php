@@ -1,24 +1,21 @@
 <?php
+// require_once 'bin/debug_config.php'; //uncomment if debugging is needed
+
 session_start();
 
 require 'bin/functions.php';
 require_once 'db_configuration.php';
 
+// check if user is admin
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    // redirect unauthorized access
+    header("Location: list_dresses.php");
+    echo "<script>alert('Unauthorized access.'); window.location.href='list_dresses.php';</script>";
+    exit;
+}
+
 // Database connection info
 $conn = new mysqli(DATABASE_HOST, DATABASE_USER, DATABASE_PASSWORD, DATABASE_DATABASE);
-
-    // ICS 325 (summer 2025)
-    // Final Project
-    // Team DOLPHIN  🐬
-
-
-// error reporting
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-?>
-
-<?php
 
 // check connection
 if ($conn->connect_error) {
@@ -28,14 +25,6 @@ if ($conn->connect_error) {
 // fetch celebrations data
 $sql = "SELECT * FROM celebrations_tbl ORDER BY celebration_date";
 $result = $conn->query($sql);
-
-// check if user is admin
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    // redirect unauthorized access
-    header("Location: list_dresses.php");
-    echo "<script>alert('Unauthorized access.'); window.location.href='list_dresses.php';</script>";
-    exit;
-}
 
 // check connection
 if ($conn->connect_error) {

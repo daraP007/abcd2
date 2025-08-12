@@ -1,19 +1,15 @@
 <?php
-session_start();
+// require_once 'bin/debug_config.php'; //uncomment if debugging is needed
+
+session_start(); // unnecessary in this context, but included for consistency
 
 require 'bin/functions.php';
 require_once 'db_configuration.php';
+
 // Database connection info
 $conn = new mysqli(DATABASE_HOST, DATABASE_USER, DATABASE_PASSWORD, DATABASE_DATABASE);
 
-    // ICS 325 (summer 2025)
-    // Final Project
-    // Team DOLPHIN  🐬
-
-// error reporting
-//ini_set('display_errors', 1);
-//error_reporting(E_ALL);
-
+// set page title before including header
 $page_title = 'Project ABCD > Celebrations';
 include('header.php');
 

@@ -1,13 +1,10 @@
 <?php
+// require_once 'bin/debug_config.php'; //uncomment if debugging is needed
+
 session_start();
 
 require 'bin/functions.php';
 require_once 'db_configuration.php';
-
-// error reporting
-//ini_set('display_errors', 1);
-//ini_set('display_startup_errors', 1);
-//error_reporting(E_ALL);
 
 // Fetch tags for filter
 $tags_group = mysqli_query($db,"select distinct tag_name from dresses_tags_tbl order by tag_name asc");
@@ -122,7 +119,11 @@ $res_data = mysqli_query($db, $sql);
 ?>
 
 <!-- header.php included before HTML output -->
-<?php include('header.php'); ?>
+<?php 
+// set page title before including header
+$page_title = 'Project ABCD > Home';
+include('header.php'); 
+?>
 
 <html>
 

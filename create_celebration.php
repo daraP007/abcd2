@@ -1,12 +1,18 @@
 <?php
+// require_once 'bin/debug_config.php'; //uncomment if debugging is needed
 
-    // ICS 325 (summer 2025)
-    // Final Project
-    // Team DOLPHIN  🐬
+session_start();
 
+// admin check and redirect to loginForm.php
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    echo "<script>
+            window.location.href = 'loginForm.php';
+          </script>";
+    exit;
+}
+// set page title before including header
 $page_title = 'Project ABCD > Create Celebration';
 include('header.php');
-
 ?>
 
 <head>

@@ -1,25 +1,20 @@
 <?php 
+// require_once 'bin/debug_config.php'; //uncomment if debugging is needed
+
 session_start();
 
 require 'bin/functions.php';
 require_once 'db_configuration.php';
-    
-    ob_end_flush();
-?>
 
-<!-- admin check for admin.php -->
-<!-- 7-31-2025: moved session_start() to the top of the file to ensure session is started before any output -->
-<?php
+// admin check and redirect
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     echo "<script>
-            alert('Unauthorized access.');
-            window.location.href = 'index.php';
+            alert('Unauthorized access. Admin privileges are required.');
+            window.location.href = 'loginForm.php';
           </script>";
     exit;
 }
-?>
 
-<?php
 $page_title = 'Project ABCD > Admin';
 include('header.php'); 
 ?>

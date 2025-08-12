@@ -1,17 +1,23 @@
 <?php
+// require_once 'bin/debug_config.php'; //uncomment if debugging is needed
+
 session_start();
 
 require 'bin/functions.php';
 require_once 'db_configuration.php';
 
-    // ICS 325 (summer 2025)
-    // Final Project
-    // Team DOLPHIN  🐬
+// admin check and redirect
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    echo "<script>
+            alert('Unauthorized access. Admin privileges are required.');
+            window.location.href = 'loginForm.php';
+          </script>";
+    exit;
+}
 
-// error reporting
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+// set page title before including header
+$page_title = 'Project ABCD > Admin-Celebrations';
+include('header.php'); 
 
 $query = "SELECT * FROM celebrations_tbl";
 $GLOBALS['data'] = mysqli_query($db, $query);
@@ -19,22 +25,7 @@ $GLOBALS['data'] = mysqli_query($db, $query);
 $query = "SELECT id, title, description, resource_type, celebration_type, celebration_date, tags, image_name, resource_url FROM celebrations_tbl";
 
 $GLOBALS['data'] = mysqli_query($db, $query);
-?>
 
-<?php
-$page_title = 'Project ABCD > Admin-Celebrations';
-include('header.php'); 
-?>
-
-<?php
-
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    echo "<script>
-            alert('Unauthorized access.');
-            window.location.href = 'index.php';
-          </script>";
-    exit;
-}
 ?>
 
 <head>

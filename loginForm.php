@@ -1,9 +1,11 @@
 <?php
-ob_start();
+// require_once 'bin/debug_config.php'; // uncomment if debugging is needed
+// ob_start(); // removed, unnecessary for this context
+
+session_start(); // unnecessary in this context, but included for consistency
 
 /* Main page with two forms: sign up and log in */
 require 'db_configuration.php';
-include('header.php');
 if ($_SERVER['REQUEST_METHOD'] == 'POST')
 
 {
@@ -18,8 +20,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 
     }
 }
-ob_flush();
+// ob_flush(); //removed, unnecessary for this context
+
+$page_title = 'Project ABCD > Login/Register';
+include('header.php');
+
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
