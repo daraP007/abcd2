@@ -10,7 +10,7 @@ require_once 'db_configuration.php';
 $conn = new mysqli(DATABASE_HOST, DATABASE_USER, DATABASE_PASSWORD, DATABASE_DATABASE);
 
 // set page title before including header
-$page_title = 'Project ABCD > Celebrations';
+$page_title = 'Project ABCD > Today\'s Celebrations';
 include('header.php');
 
 // Check connection

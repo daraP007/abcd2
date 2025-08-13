@@ -16,7 +16,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 }
 
 // set page title before including header
-$page_title = 'Project ABCD > Admin-Celebrations';
+$page_title = 'Project ABCD > Admin-Today\'s Celebrations';
 include('header.php'); 
 
 $query = "SELECT * FROM celebrations_tbl";
