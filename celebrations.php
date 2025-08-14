@@ -55,8 +55,8 @@ $result = $conn->query($sql);
 ?>
 
 <head>
+    <title>Project ABCD > Today's Celebrations</title>
     <link rel="stylesheet" type="text/css" href="css/list_celebrations.css">
-    <title>ABCD</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300&display=swap" rel="stylesheet">
@@ -74,7 +74,7 @@ $result = $conn->query($sql);
     <br>
     <h2 id="title">TODAY'S CELEBRATIONS</h2><br>
 
-    <h3 style="text-align:center;">Celebrations for <?= date('F j, Y', strtotime($today)) ?> (🎉 <?= $celebration_count ?>)</h3>
+    <h1 id ="section-heading">Celebrations for <?= date('F j, Y', strtotime($today)) ?> (🎉 <?= $celebration_count ?>)</h1>
 
     <div class="row justify-content-center">
         <?php
