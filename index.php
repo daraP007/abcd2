@@ -73,11 +73,6 @@ if ($search !== '') {
     }
 }
 
-// pagination inputs 
-$limit  = isset($_GET['limit']) && in_array((int)$_GET['limit'], [10,20,50,75,100]) ? (int)$_GET['limit'] : 10;
-$page   = isset($_GET['page'])  && (int)$_GET['page'] > 0 ? (int)$_GET['page'] : 1;
-$offset = ($page - 1) * $limit;
-
 // sort inputs 
 $sort     = $_GET['sort'] ?? 'ID';
 $allowed  = ['ID'=>'id','Name'=>'name','Category'=>'category','Type'=>'type'];
@@ -97,24 +92,34 @@ $allowed  = ['ID'=>'id','Name'=>'name','Category'=>'category','Type'=>'type'];
 if (! array_key_exists($sort, $allowed)) {
     $sort = 'ID';
 }
+
 $sort_column = $allowed[$sort];
 
-// total count for pagination
-$countRes   = mysqli_query($db, "SELECT COUNT(*) AS total FROM dresses");
-$totalRow   = mysqli_fetch_assoc($countRes);
-$totalPages = (int)ceil($totalRow['total'] / $limit);
+// defaults for reset button
+$defaultLimitParam = '10';
+$defaultSort = 'ID';
 
-// Data query with ORDER BY and LIMIT/OFFSET
-$sql = "
-    SELECT
-        id, name, type, category,
-        state_name, key_words,
-        image_url, status, notes, tag_line
-    FROM dresses
-    ORDER BY {$sort_column} ASC
-    LIMIT {$offset}, {$limit}
-";
-$res_data = mysqli_query($db, $sql);
+// --- limit/page/offset with "all" support ---
+$limitParam   = $_GET['limit'] ?? '10';                 // raw input (string)
+$validLimits  = ['10','20','50','75','100','all'];
+if (!in_array($limitParam, $validLimits, true)) {
+    $limitParam = '10';
+}
+$limitIsAll = ($limitParam === 'all');
+$limit      = $limitIsAll ? null : (int)$limitParam;    // null => no LIMIT later
+
+$page   = isset($_GET['page']) && (int)$_GET['page'] > 0 ? (int)$_GET['page'] : 1;
+$offset = $limitIsAll ? 0 : ($page - 1) * $limit;
+
+// total count for pagination (respect current filter/search)
+$countSql = "SELECT COUNT(*) AS total FROM dresses {$where}";
+$countRes = mysqli_query($db, $countSql);
+$totalRow = mysqli_fetch_assoc($countRes);
+$totalFiltered = (int)$totalRow['total'];
+$totalPages    = $limitIsAll ? 1 : (int)ceil(($totalFiltered ?: 1) / $limit);
+if ($limitIsAll) {
+    $page = 1; // single page when showing all
+}
 
 ?>
 
@@ -249,19 +254,23 @@ include('header.php');
     $result = mysqli_query($db, $all_dresses_sql);
     $num_results = mysqli_num_rows($result);
 
+$limitIsAll = ($limitParam === 'all');
+$limit      = $limitIsAll ? null : (int)$limitParam;    // null signals "no LIMIT" later
 
-// — Pagination Inputs —
-$limit  = isset($_GET['limit'])  && in_array((int)$_GET['limit'], [10,20,50,75,100])
-            ? (int)$_GET['limit'] : 10;
-$page   = isset($_GET['page'])   && (int)$_GET['page'] > 0
-            ? (int)$_GET['page'] : 1;
-$offset = ($page - 1) * $limit;
+$page   = isset($_GET['page']) && (int)$_GET['page'] > 0 ? (int)$_GET['page'] : 1;
+$offset = $limitIsAll ? 0 : ($page - 1) * $limit;
 
-// — Total count for pagination —
-$countRes   = mysqli_query($db, "SELECT COUNT(*) AS total FROM dresses {$where}");
-$totalRow  = mysqli_fetch_assoc($countRes);
-$total     = (int)$totalRow['total'];
-$totalPages = (int)ceil($total / $limit);
+// total count for pagination (respect current filter/search)
+$countSql = "SELECT COUNT(*) AS total FROM dresses {$where}";
+$countRes = mysqli_query($db, $countSql);
+$totalRow = mysqli_fetch_assoc($countRes);
+$totalFiltered = (int)$totalRow['total'];
+$totalPages    = $limitIsAll ? 1 : (int)ceil(($totalFiltered ?: 1) / $limit);
+
+// keep page sane when "all"
+if ($limitIsAll) {
+    $page = 1;
+}
 
 // — Data query with ORDER BY id and LIMIT/OFFSET —
 $sql = "
@@ -271,9 +280,9 @@ $sql = "
         image_url, status, notes, tag_line
     FROM dresses
     {$where}
-    ORDER BY {$sort_column} ASC
-    LIMIT {$offset}, {$limit}
-";
+    ORDER BY {$sort_column} ASC"
+  . ($limitIsAll ? "" : " LIMIT {$offset}, {$limit}");
+
 $res_data = mysqli_query($db, $sql);
 
 ?>
@@ -285,24 +294,24 @@ $res_data = mysqli_query($db, $sql);
 <!-- sort block updated -->
 <div class="controlsForm">
 
-    <!-- SHOW dropdown (preserves current sort) -->
+<!-- SHOW dropdown (preserves current sort) -->
 <form method="get" action="index.php" class="limitForm" style="display:inline-block; margin-right: 1rem;">
   <label for="limitSelect">Show:</label>
   <select name="limit" id="limitSelect" class="sortLink" onchange="this.form.submit()">
-      <option value="10"  <?= $limit === 10  ? 'selected' : '' ?>>10</option>
-      <option value="20"  <?= $limit === 20  ? 'selected' : '' ?>>20</option>
-      <option value="50"  <?= $limit === 50  ? 'selected' : '' ?>>50</option>
-      <option value="75"  <?= $limit === 75  ? 'selected' : '' ?>>75</option>
-      <option value="100" <?= $limit === 100 ? 'selected' : '' ?>>100</option>
+      <option value="10"  <?= (!$limitIsAll && $limit === 10)  ? 'selected' : '' ?>>10</option>
+      <option value="20"  <?= (!$limitIsAll && $limit === 20)  ? 'selected' : '' ?>>20</option>
+      <option value="50"  <?= (!$limitIsAll && $limit === 50)  ? 'selected' : '' ?>>50</option>
+      <option value="75"  <?= (!$limitIsAll && $limit === 75)  ? 'selected' : '' ?>>75</option>
+      <option value="100" <?= (!$limitIsAll && $limit === 100) ? 'selected' : '' ?>>100</option>
+      <option value="all" <?= $limitIsAll ? 'selected' : '' ?>>All</option>
   </select>
 
-  <!-- preserve current settings -->
+  <!-- preserve current settings and reset to page 1 -->
   <input type="hidden" name="sort" value="<?= htmlspecialchars($sort) ?>">
   <input type="hidden" name="tag"  value="<?= htmlspecialchars($selectedTag) ?>">
   <input type="hidden" name="q"    value="<?= htmlspecialchars($search) ?>">
   <input type="hidden" name="page" value="1">
 </form>
-
 
 <!-- SORT BY links -->
 <details class="dropdown" style="display:inline-block; margin-right:1rem;">
@@ -325,14 +334,14 @@ $res_data = mysqli_query($db, $sql);
     <summary class="sortLink">Filter by ▾</summary>
     <ul class="dropdown-menu">
     <!-- preserve current Filter By -->
+    <?php $limitQuery = $limitIsAll ? 'all' : (string)$limit; ?>
     <li>
-        <a href="?limit=<?= $limit ?>&sort=<?= urlencode($sort) ?>&tag=&q=<?= urlencode($search) ?>&page=1"
+        <a href="?limit=<?= $limitQuery ?>&sort=<?= urlencode($sort) ?>&tag=&q=<?= urlencode($search) ?>&page=1"
             class="<?= $selectedTag === '' ? 'active' : '' ?>">All</a>
     </li>
     <?php foreach ($tags as $tag): ?>
-    <!-- preserve current Filter By -->
     <li>
-        <a href="?limit=<?= $limit ?>&sort=<?= urlencode($sort) ?>&tag=<?= urlencode($tag) ?>&q=<?= urlencode($search) ?>&page=1"
+        <a href="?limit=<?= $limitQuery ?>&sort=<?= urlencode($sort) ?>&tag=<?= urlencode($tag) ?>&q=<?= urlencode($search) ?>&page=1"
             class="<?= ($selectedTag === $tag) ? 'active' : '' ?>">
             <?= htmlspecialchars($tag) ?>
         </a>
@@ -342,21 +351,29 @@ $res_data = mysqli_query($db, $sql);
 </details>
 
 <!-- PAGINATION LINKS -->
-<span class="pageNavContainer" style="display:inline-block;">
-    <!-- preserve current pagination settings -->
-    <?php if ($page > 1): ?>
-        <a href="?limit=<?= $limit ?>&sort=<?= urlencode($sort) ?>&tag=<?= urlencode($selectedTag) ?>&q=<?= urlencode($search) ?>&page=<?= $page - 1 ?>" class="pageButton">&laquo; Prev</a>
-    <?php endif; ?>
-    <?php if ($page < $totalPages): ?>
-        <a href="?limit=<?= $limit ?>&sort=<?= urlencode($sort) ?>&tag=<?= urlencode($selectedTag) ?>&q=<?= urlencode($search) ?>&page=<?= $page + 1 ?>" class="pageButton">Next &raquo;</a>
-    <?php endif; ?>
+<span class="pageNavContainer">
+  <?php $limitQuery = $limitIsAll ? 'all' : (string)$limit; ?>
+
+  <?php if ($page > 1): ?>
+    <a href="?limit=<?= $limitQuery ?>&sort=<?= urlencode($sort) ?>&tag=<?= urlencode($selectedTag) ?>&q=<?= urlencode($search) ?>&page=<?= $page - 1 ?>" class="pageButton">&laquo; Previous</a>
+  <?php endif; ?>
+
+  <!-- Reset to defaults 
+        NOTE: if you want to change the default limit or sort, 
+        change the variables above, listed under 'defaults for reset button'
+   -->
+  <a href="?limit=<?= $defaultLimitParam ?>&sort=<?= urlencode($defaultSort) ?>&tag=&q=&page=1" class="pageButton">Reset</a>
+
+  <?php if ($page < $totalPages): ?>
+    <a href="?limit=<?= $limitQuery ?>&sort=<?= urlencode($sort) ?>&tag=<?= urlencode($selectedTag) ?>&q=<?= urlencode($search) ?>&page=<?= $page + 1 ?>" class="pageButton">Next &raquo;</a>
+  <?php endif; ?>
 </span>
 
 <!-- SEARCH FORM -->
 <form method="get" action="index.php" class="searchForm">
     <input type="text" name="q" value="<?= htmlspecialchars($search) ?>" placeholder="Search dresses…" class="searchInput">
     <!-- preserve current settings and reset to page 1 -->
-    <input type="hidden" name="limit" value="<?= $limit ?>">
+    <input type="hidden" name="limit" value="<?= $limitIsAll ? 'all' : $limit ?>">
     <input type="hidden" name="sort"  value="<?= htmlspecialchars($sort) ?>">
     <input type="hidden" name="tag"   value="<?= htmlspecialchars($selectedTag) ?>">
     <input type="hidden" name="page"  value="1">

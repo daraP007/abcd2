@@ -55,7 +55,6 @@ body {
 
 }
 
-
 .pageNav {
     text-align: center;
     width: fit-content;
@@ -72,7 +71,6 @@ a.pageButton {
     color: #138808;
     border: 1px solid grey;
 }
-
 
 .subTitle {
 
@@ -271,3 +269,5 @@ select.sortLink:hover {
   background: orangered;
   color: white;
 }
+
+
