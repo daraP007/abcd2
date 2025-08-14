@@ -1,9 +1,10 @@
 <?php
+// require_once 'bin/debug_config.php'; //uncomment if debugging is needed
+
 session_start();
 
 require 'bin/functions.php';
 require_once 'db_configuration.php';
-
 
 //Read cookies for description and did you know length, use defauts if not set.
 $description_length = 1000;
@@ -245,8 +246,6 @@ $GLOBALS['data'] = mysqli_query($db, $query);
         src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
 
 <!--Data Table-->
-<script type="text/javascript" charset="utf8"
-        src="https://editor.datatables.net/extensions/Editor/js/dataTables.editor.min.js"></script>
 <script type="text/javascript" charset="utf8"
         src="https://code.jquery.com/jquery-3.3.1.js"></script>
 <script type="text/javascript" charset="utf8"
