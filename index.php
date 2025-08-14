@@ -285,134 +285,92 @@ $res_data = mysqli_query($db, $sql);
 <!-- sort block updated -->
 <div class="controlsForm">
 
-    <!-- 1) SHOW dropdown (preserves current sort) -->
-    <form method="get" action="index.php" class="limitForm" style="display:inline-block; margin-right: 1rem;">
-        <label for="limitSelect">Show:</label>
-        <select name="limit" id="limitSelect" class="sortLink" onchange="this.form.submit()">
-            <option value="10"  <?= $limit === 10  ? 'selected' : '' ?>>10</option>
-            <option value="20"  <?= $limit === 20  ? 'selected' : '' ?>>20</option>
-            <option value="50"  <?= $limit === 50  ? 'selected' : '' ?>>50</option>
-            <option value="75"  <?= $limit === 75  ? 'selected' : '' ?>>75</option>
-            <option value="100" <?= $limit === 100 ? 'selected' : '' ?>>100</option>
-        </select>
-        <!-- preserve the sort when changing limit -->
-        <input type="hidden" name="sort" value="<?= htmlspecialchars($sort) ?>">
-    </form>
+    <!-- SHOW dropdown (preserves current sort) -->
+<form method="get" action="index.php" class="limitForm" style="display:inline-block; margin-right: 1rem;">
+  <label for="limitSelect">Show:</label>
+  <select name="limit" id="limitSelect" class="sortLink" onchange="this.form.submit()">
+      <option value="10"  <?= $limit === 10  ? 'selected' : '' ?>>10</option>
+      <option value="20"  <?= $limit === 20  ? 'selected' : '' ?>>20</option>
+      <option value="50"  <?= $limit === 50  ? 'selected' : '' ?>>50</option>
+      <option value="75"  <?= $limit === 75  ? 'selected' : '' ?>>75</option>
+      <option value="100" <?= $limit === 100 ? 'selected' : '' ?>>100</option>
+  </select>
 
-    <!-- 2) SORT BY links -->
-    <details class="dropdown" style="display:inline-block; margin-right:1rem;">
-        <summary class="sortLink">Sort by ▾</summary>
-        <ul class="dropdown-menu">
-            <?php foreach (['ID','Name','Category','Type'] as $opt): ?>
-                <li>
-                    <a href="?limit=<?= $limit ?>&sort=<?= $opt ?>&page=1" class="<?= $sort === $opt ? 'active' : '' ?>"><?= $opt ?></a>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    </details>
+  <!-- preserve current settings -->
+  <input type="hidden" name="sort" value="<?= htmlspecialchars($sort) ?>">
+  <input type="hidden" name="tag"  value="<?= htmlspecialchars($selectedTag) ?>">
+  <input type="hidden" name="q"    value="<?= htmlspecialchars($search) ?>">
+  <input type="hidden" name="page" value="1">
+</form>
+
+
+<!-- SORT BY links -->
+<details class="dropdown" style="display:inline-block; margin-right:1rem;">
+    <summary class="sortLink">Sort by ▾</summary>
+    <ul class="dropdown-menu">
+        <?php foreach (['ID','Name','Category','Type'] as $opt): ?>
+            <li>
+                <!-- preserve current settings and reset to page 1 -->
+                <a href="?limit=<?= $limit ?>&sort=<?= urlencode($opt) ?>
+                    &tag=<?= urlencode($selectedTag) ?>&q=<?= urlencode($search) ?>&page=1"
+                    class="<?= $sort === $opt ? 'active' : '' ?>"><?= $opt ?>
+                </a>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+</details>
 
 <!--Filter By Tags -->
-<!-- updated filter by block -->
-    <details class="dropdown" style="display:inline-block; margin-right:1rem;">
-        <summary class="sortLink">Filter by ▾</summary>
-        <ul class="dropdown-menu">
-        <li>
-            <a href="?limit=<?= $limit ?>&sort=<?= urlencode($sort) ?>&page=1"
-                class="<?= $selectedTag === '' ? 'active' : '' ?>">All</a>
-        </li>
-        <?php foreach ($tags as $tag): ?>
-        <li>
-            <a href="?limit=<?= $limit ?>&sort=<?= urlencode($sort) ?>&tag=<?= urlencode($tag) ?>&page=1"
-                class="<?= ($selectedTag === $tag) ? 'active' : '' ?>">
-                <?= htmlspecialchars($tag) ?>
-            </a>
-        </li>
-        <?php endforeach; ?>
-        </ul>
-    </details>
-<!-- old filter by block 
-    <details class="dropdown" style="display:inline-block; margin-right:1rem;">
-        <summary class="sortLink">Filter by ▾</summary>
-        <ul class="dropdown-menu">
-            <li><a href="?limit=<?= $limit ?>&sort=<?= $sort ?>&page=1">All</a></li>
-            <li><a href="?limit=<?= $limit ?>&sort=<?= $sort ?>&filter=people">People</a></li>
-            <li><a href="?limit=<?= $limit ?>&sort=<?= $sort ?>&filter=regional">Regional</a></li>
-            <li><a href="?limit=<?= $limit ?>&sort=<?= $sort ?>&filter=festivals">Festivals</a></li>
-            <li><a href="?limit=<?= $limit ?>&sort=<?= $sort ?>&filter=religious">Religious</a></li>
-        </ul>
-    </details>
--->
+<details class="dropdown" style="display:inline-block; margin-right:1rem;">
+    <summary class="sortLink">Filter by ▾</summary>
+    <ul class="dropdown-menu">
+    <!-- preserve current Filter By -->
+    <li>
+        <a href="?limit=<?= $limit ?>&sort=<?= urlencode($sort) ?>&tag=&q=<?= urlencode($search) ?>&page=1"
+            class="<?= $selectedTag === '' ? 'active' : '' ?>">All</a>
+    </li>
+    <?php foreach ($tags as $tag): ?>
+    <!-- preserve current Filter By -->
+    <li>
+        <a href="?limit=<?= $limit ?>&sort=<?= urlencode($sort) ?>&tag=<?= urlencode($tag) ?>&q=<?= urlencode($search) ?>&page=1"
+            class="<?= ($selectedTag === $tag) ? 'active' : '' ?>">
+            <?= htmlspecialchars($tag) ?>
+        </a>
+    </li>
+    <?php endforeach; ?>
+    </ul>
+</details>
 
-    <!-- 3) PAGINATION LINKS -->
-    <span class="pageNavContainer" style="display:inline-block;">
-        <?php if ($page > 1): ?>
-            <a href="?limit=<?= $limit ?>&sort=<?= $sort ?>&page=<?= $page - 1 ?>" class="pageButton">&laquo; Previous</a>
-        <?php endif; ?>
+<!-- PAGINATION LINKS -->
+<span class="pageNavContainer" style="display:inline-block;">
+    <!-- preserve current pagination settings -->
+    <?php if ($page > 1): ?>
+        <a href="?limit=<?= $limit ?>&sort=<?= urlencode($sort) ?>&tag=<?= urlencode($selectedTag) ?>&q=<?= urlencode($search) ?>&page=<?= $page - 1 ?>" class="pageButton">&laquo; Prev</a>
+    <?php endif; ?>
+    <?php if ($page < $totalPages): ?>
+        <a href="?limit=<?= $limit ?>&sort=<?= urlencode($sort) ?>&tag=<?= urlencode($selectedTag) ?>&q=<?= urlencode($search) ?>&page=<?= $page + 1 ?>" class="pageButton">Next &raquo;</a>
+    <?php endif; ?>
+</span>
 
-        <?php if ($page < $totalPages): ?>
-            <a href="?limit=<?= $limit ?>&sort=<?= $sort ?>&page=<?= $page + 1 ?>" class="pageButton">Next &raquo;</a>
-        <?php endif; ?>
-    </span>
-
-    <form method="get" action="index.php" class="searchForm">
-        <input type="text" name="q" value="<?= htmlspecialchars($search) ?>" placeholder="Search dresses…" class="searchInput">
-        <!-- preserve current settings and reset to page 1 -->
-        <input type="hidden" name="limit" value="<?= $limit ?>">
-        <input type="hidden" name="sort"  value="<?= htmlspecialchars($sort) ?>">
-        <input type="hidden" name="tag"   value="<?= htmlspecialchars($selectedTag) ?>">
-        <input type="hidden" name="page"  value="1">
-        <button type="submit" class="sortLink">Search</button>
-        <?php if ($search !== ''): ?>
-            <a href="?limit=<?= $limit ?>&sort=<?= urlencode($sort) ?>&tag=<?= urlencode($selectedTag) ?>&page=1"
-                class="pageButton">Clear</a>
-        <?php endif; ?>
-    </form>
+<!-- SEARCH FORM -->
+<form method="get" action="index.php" class="searchForm">
+    <input type="text" name="q" value="<?= htmlspecialchars($search) ?>" placeholder="Search dresses…" class="searchInput">
+    <!-- preserve current settings and reset to page 1 -->
+    <input type="hidden" name="limit" value="<?= $limit ?>">
+    <input type="hidden" name="sort"  value="<?= htmlspecialchars($sort) ?>">
+    <input type="hidden" name="tag"   value="<?= htmlspecialchars($selectedTag) ?>">
+    <input type="hidden" name="page"  value="1">
+    <button type="submit" class="sortLink">Search</button>
+    <?php if ($search !== ''): ?>
+        <a href="?limit=<?= $limit ?>&sort=<?= urlencode($sort) ?>&tag=<?= urlencode($selectedTag) ?>&page=1"
+            class="pageButton">Clear</a>
+    <?php endif; ?>
+</form>
 
 </div>
 
 <?php
 
-
-    // === ignore: further optimizations are possible =========
-//     $query = "SELECT * FROM `dresses`";
-    
-// if ($result = mysqli_query($db, $query)) {
-
-//     /* fetch associative array */
-//     while ($row = mysqli_fetch_assoc($result)) {
-//         printf ("%s (%s)\n", $row["name"], $row["image_url"]);
-//     }
-//     /* free result set */
-//     mysqli_free_result($result);
-// }
-
-
-
-    //=============================================================================
-    // Step 3: Now, display the dresses in loop 
-    //=============================================================================
-
-    // echo "row count --> " . $row_count;
-    // echo "<br>dresses count --> " . $dresses_count;
-
-   // <image class = 'image' src = $pic> </image>
-/*?>
-   <div id="customerTableView">
-   <table class="display" id="ceremoniesTable" style="width:100%">
-       <div class="table responsive">
-           <thead>
-           <tr>
-               <th>ID</th>
-               <th>Name</th>
-               <th>Category</th>
-               <th>Type</th>
-               <th>State Name </th>
-               <th>Status</th>
-           </tr>
-           </thead> 
-           <tbody>
-           <div> 
-<?php */
     $counter = 0;
     // bootstrap responzive table div wrap
     echo "<div class='table-responsive-lg' id='responsive_table_2'><table id = 'table_2'>";
@@ -448,9 +406,7 @@ $res_data = mysqli_query($db, $sql);
     </table></div>
     
 <!--Data Table -->
-<!--<script type="text/javascript" charset="utf8"
-        src="https://editor.datatables.net/extensions/Editor/js/dataTables.editor.min.js"></script> -->
-        <script type="text/javascript" charset="utf8"
+<script type="text/javascript" charset="utf8"
         src="https://code.jquery.com/jquery-3.3.1.js"></script> 
 <script type="text/javascript" charset="utf8"
         src="https://cdn.datatables.net/buttons/1.6.1/js/dataTables.buttons.min.js"></script> 
