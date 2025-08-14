@@ -246,6 +246,7 @@ $GLOBALS['data'] = mysqli_query($db, $query);
         src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
 
 <!--Data Table-->
+<!-- removed DataTables Editor extension as it is paid only -->
 <script type="text/javascript" charset="utf8"
         src="https://code.jquery.com/jquery-3.3.1.js"></script>
 <script type="text/javascript" charset="utf8"
