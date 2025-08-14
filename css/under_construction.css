@@ -1,0 +1,65 @@
+#title {
+    text-align: center;
+    color: #000080;
+    font-family: 'Kanit';
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 70px;
+    text-shadow: 2px 2px 4px #cec6bd;
+}
+
+/* added for section heading */
+#section-heading {
+    text-align: center;
+    color: #000080;
+    font-family: 'Kanit', sans-serif;
+    text-transform: none; 
+    font-weight: bold;
+    font-size: 32px;
+}
+
+/* added for instructions */
+.instruction {
+    text-align: center;
+    color: #000080;
+    font-family: 'Kanit', sans-serif;
+    font-weight: normal;
+    font-size: 16px; 
+}
+@keyframes pulse {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.fun-button {
+    display: inline-block;
+    padding: 12px 24px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(45deg, orangered, #000080);
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    animation: pulse 2.5s infinite ease-in-out;
+}
+
+.fun-button:hover {
+    transform: scale(1.08) rotate(-1deg);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    background: linear-gradient(45deg, #000080, orangered);
+    animation: none; /* stop pulsing when hovered */
+}
+
+.fun-button:active {
+    transform: scale(0.98);
+}
+
+.button-container {
+    text-align: center;
+    margin-top: 30px; /* adjust space above as needed */
+}
