@@ -190,22 +190,18 @@ select.sortLink:hover {
   font-family: 'Kanit', sans-serif;
 }
 
-/* tighten up the page button spacing */
 .pageNavContainer a.pageButton {
   margin: 0 4px;
 }
 
-/* Dropdown container */
 .dropdown {
   position: relative;
 }
 
-/* Hide default triangle (optional) */
 .dropdown summary::-webkit-details-marker {
   display: none;
 }
 
-/* Style the summary as a button */
 .dropdown summary.sortLink {
   margin: 0;
   padding: 8px 12px;
@@ -217,17 +213,15 @@ select.sortLink:hover {
   font-family: 'Kanit', sans-serif;
 }
 
-/* Hover state */
 .dropdown summary.sortLink:hover {
   background-color: white;
   color: orangered;
 }
 
-/* The dropdown menu, hidden by default */
 .dropdown .dropdown-menu {
   display: none;
   position: absolute;
-  top: 100%; /* just below the summary */
+  top: 100%; 
   left: 0;
   background: white;
   border: 1px solid #ddd;
@@ -239,12 +233,10 @@ select.sortLink:hover {
   z-index: 100;
 }
 
-/* Show menu when expanded */
 .dropdown[open] .dropdown-menu {
   display: block;
 }
 
-/* Menu Items */
 .dropdown .dropdown-menu li {
   margin: 0;
 }
@@ -257,13 +249,11 @@ select.sortLink:hover {
   font-family: 'Kanit', sans-serif;
 }
 
-/* Hover on menu items */
 .dropdown .dropdown-menu li a:hover {
   background: orangered;
   color: white;
 }
 
-/* Active menu item */
 .dropdown .dropdown-menu li a.active {
   font-weight: bold;
   background: orangered;
