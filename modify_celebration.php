@@ -21,7 +21,6 @@ if ($id <= 0) {
     exit;
 }
 
-
 $error = '';
 $allowedTypes = ['Person', 'Event', 'Religious'];
 $MAX_VARCHAR = 255;
