@@ -50,8 +50,28 @@ $nextMonth = $month + 1; $nextYear = $year;
 if ($nextMonth > 12) { $nextMonth = 1; $nextYear++; }
 
 /* ALL CELEBRATIONS */
-$sql = "SELECT * FROM celebrations_tbl ORDER BY celebration_date";
-$result = $conn->query($sql);
+//$sql = "SELECT * FROM celebrations_tbl ORDER BY celebration_date";
+//$result = $conn->query($sql);
+
+// --- SEARCH LOGIC ---
+$search = trim($_GET['q'] ?? '');
+
+if ($search !== '') {
+    $sql  = "SELECT *
+            FROM celebrations_tbl
+            WHERE title LIKE ?
+                OR description       LIKE ?
+            ORDER BY celebration_date";
+    $stmt = $conn->prepare($sql);
+    $like = "%{$search}%";
+    $stmt->bind_param('ss', $like, $like);
+    $stmt->execute();
+    $result = $stmt->get_result();
+} else {
+    $sql = "SELECT * FROM celebrations_tbl ORDER BY celebration_date";
+    $result = $conn->query($sql);
+}
+
 ?>
 
 <head>
@@ -110,6 +130,34 @@ $result = $conn->query($sql);
         <strong><?=date('F Y', strtotime("$year-$month-01"))?></strong>
         <a href="?month=<?=$nextMonth?>&year=<?=$nextYear?>">Next ➡</a>
     </div>
+
+<!-- search Celebrations -->
+<form method="get" action="celebrations.php" class="search-form" style="display:flex;gap:.5rem;justify-content:center;align-items:center;margin:1rem 0;">
+    <input type="text" name="q" value="<?= htmlspecialchars($_GET['q'] ?? '') ?>" placeholder="Search celebrations…" />
+    <button type="submit">Search</button>
+    <?php if (!empty($_GET['q'])): ?>
+        <a href="celebrations.php" style="text-decoration:underline;">Clear</a>
+    <?php endif; ?>
+</form>
+
+<?php
+$search = trim($_GET['q'] ?? '');
+?>
+<?php if ($search !== ''): ?>
+  <div class="search-results-note">
+    Showing results for <strong><?= htmlspecialchars($search) ?></strong>
+    <?php if (isset($result) && method_exists($result, 'num_rows')): ?>
+      (<?= (int)$result->num_rows ?> found)
+    <?php endif; ?>
+  </div>
+<?php endif; ?>
+
+<?php if (isset($result)): ?>
+  <p style="text-align:center; font-size:0.9rem; opacity:.8; margin:.25rem 0;">
+    Found <?= (int)$result->num_rows ?> result(s)<?= $search !== '' ? " for “" . htmlspecialchars($search) . "”" : "" ?>.
+  </p>
+<?php endif; ?>
+
 
     <!--  Calendar Grid -->
     <table class="calendar">
@@ -171,5 +219,5 @@ $result = $conn->query($sql);
 
 <footer class="page-footer text-center">
     <br>
-    <p>© Summer 2025 Team DOLPHIN 🐬</p>
+    <p>© Summer 2025 Team DOLPHIN 🐬</p><br>
 </footer>
