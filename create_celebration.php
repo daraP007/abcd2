@@ -27,7 +27,7 @@ include('header.php');
     <h2 id="title">Create a Celebration</h2><br>
 </div>
 
-<form action="create_the_celebration.php" method="POST" class="form-horizontal" style="width:80%; margin: 0 auto;">
+<form action="create_the_celebration.php" method="POST" class="form-horizontal" style="width:80%; margin: 0 auto;" enctyype="multipart/form-data">
   <div class="form-group">
     <label for="title">Title:</label>
     <input class="form-control" type="text" name="title" required>
@@ -59,13 +59,43 @@ include('header.php');
     <label for="resource_url">Resource Link (URL):</label>
     <input class="form-control" type="url" name="resource_url" required>
   </div>
+
+<!--Changed to type file, added ID -->
   <div class="form-group">
-    <label for="image">Image Filename (optional):</label>
-    <input class="form-control" type="text" name="image" placeholder="example.png">
+    <label for="image">Image Upload:</label>
+    <input class="form-control" type="file" name="image" id="image">
   </div>
+  
+<!-- Spot for preview -->
+  <div style="margin-top: 10px;">
+      <img id="imagePreview" src="" style="display:none; max-width:200px; border:1px solid #000000ff; padding:5px;">
+  </div>
+
   <div class="form-group text-center mt-4">
     <input class="btn btn-primary" type="submit" name="submit" value="Create Celebration">
   </div>
+
+
+  <script>
+  document.getElementById('image').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    const preview = document.getElementById('imagePreview');
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    } else {
+        preview.src = '';
+        preview.style.display = 'none';
+    }
+    });
+</script>
+
+
   <footer class="page-footer text-center">
     <br>
     <p>© Summer 2025 Team DOLPHIN 🐬</p>
