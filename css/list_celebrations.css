@@ -136,6 +136,6 @@ thead input {
     transition: background-color 0.3s ease;
 }
 .btn-save:hover {
-    background-color: #218838; /* darker green on hover */
+    background-color: #218838; 
     border-color: #1e7e34;
 }
