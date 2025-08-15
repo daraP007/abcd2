@@ -81,12 +81,6 @@ if ($search !== '') {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./css/responsive_style.css">
-    <style>
-        table.calendar { border-collapse: collapse; margin: 0 auto 20px auto; }
-        table.calendar th, table.calendar td { border: 1px solid #ccc; width: 100px; height: 80px; text-align: center; vertical-align: top; }
-        table.calendar th { background-color: #f0f0f0; }
-        table.calendar td a { display: block; text-decoration: none; color: black; }
-    </style>
 </head>
 
 <br><br>
