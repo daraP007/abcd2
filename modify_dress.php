@@ -170,17 +170,39 @@ if ($result->num_rows > 0) {
         <label for="cadence"> Choose a file to change above image (Optional)</label>
         <input type="file" name="fileToUpload" id="fileToUpload" maxlength="255">
       </div>
-      <input type="hidden" class="form-control" name="oldimage" value="'.$row["image_url"].'" maxlength="255" required>
-      <br>
-      <div class="text-left">
-          <button type="submit" name="submit" class="btn btn-primary btn-md align-items-center">Modify Dress</button>
-      </div>
-      <br>
+  <input type="hidden" class="form-control" name="oldimage" value="'.$row["image_url"].'" maxlength="255" required>
+<br>';
+?>  <!--  CLOSE the echo block -->
 
-      <br> <br>
-      
-      </form>';
-    
+<?php
+//  Load all tags from file
+$tag_list = file("abcd_tags.txt", FILE_IGNORE_NEW_LINES);
+
+//  Load tags already assigned to this dress
+$existing_tags = [];
+$tag_result = mysqli_query($db, "SELECT tag FROM dresses_tags_tbl WHERE dress_id = $id");
+while ($tag_row = mysqli_fetch_assoc($tag_result)) {
+    $existing_tags[] = $tag_row['tag'];
+}
+?>
+
+<h4>Assign Tags</h4>
+<?php foreach ($tag_list as $tag): ?>
+    <label>
+        <input type="checkbox" name="tags[]" value="<?= htmlspecialchars($tag) ?>"
+               <?= in_array($tag, $existing_tags) ? 'checked' : '' ?>>
+        <?= htmlspecialchars($tag) ?>
+    </label><br>
+<?php endforeach; ?>
+
+<?php
+echo '  <!--  REOPEN echo block -->
+<div class="text-left">
+    <button type="submit" name="submit" class="btn btn-primary btn-md align-items-center">Modify Dress</button>
+</div>
+<br><br>
+</form>';
+
     }//end while
 }//end if
 else {

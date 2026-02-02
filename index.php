@@ -1,46 +1,133 @@
 <?php
+// require_once 'bin/debug_config.php'; //uncomment if debugging is needed
 
-    if(!isset($_SESSION)) 
-    { 
-        session_start();
-    } 
+session_start();
 
 require 'bin/functions.php';
-require 'db_configuration.php';
-include('chatbot.php');
-include('header.php');
+require_once 'db_configuration.php';
 
+// Fetch tags for filter
+$tags_group = mysqli_query($db,"select distinct tag_name from dresses_tags_tbl order by tag_name asc");
 
-/*$sort_array=['name', 'category', 'type' , 'state_name' , 'status'];
-     
-this is commented out section
+$tags = [];
+if ($tags_group && mysqli_num_rows($tags_group) > 0){
+    while ($row = mysqli_fetch_assoc($tags_group)){
+        $tags[] = $row['tag_name'];
+    }
+}
 
-        $r = @$_GET['option'];
-      
-        $num = count($sort_array);
+// fetch tags for filter
+$tags = [];
+$tags_group = mysqli_query(
+    $db,
+    "SELECT DISTINCT tag_name
+     FROM dresses_tags_tbl
+     WHERE tag_name IS NOT NULL AND tag_name <> ''
+     ORDER BY tag_name ASC"
+);
+if ($tags_group && mysqli_num_rows($tags_group) > 0) {
+    while ($row = mysqli_fetch_assoc($tags_group)) {
+        $tags[] = $row['tag_name'];
+    }
+}
 
-        for ($i=0 ; $i < $num ; $i++) {
+// Selected tag from querystring
+$selectedTag = isset($_GET['tag']) ? trim($_GET['tag']) : '';
 
-          if ($sort_array[$i] == $r){
-            $sort_array[$i] = "$sort_array[$i]" .'"'. ' selected = "selected" ' ;
-            }
-        else $sort_array[$i] = "$sort_array[$i]";
-        }
+// WHERE clause for tag filter (searches comma-separated key_words, case-insensitive)
+$where = '';
+if ($selectedTag !== '') {
+    $norm   = strtolower($selectedTag);
+    $normExpr = "REPLACE(CONCAT(',', LOWER(key_words), ','), ', ', ',')";
+    $safe   = mysqli_real_escape_string($db, $norm);
+    $where  = "WHERE LOCATE(CONCAT(',', '{$safe}', ','), {$normExpr}) > 0";
+}
 
-echo '<div text-align: left>
-<label>Sort by</label> 
-<form name="sort" method = get action = "" text-align: left>
-<select id="sel_id" name="option"  onchange="this.form.submit();">
-    <option value="'.$sort_array[0].'">Name</option>
-    <option value="'.$sort_array[1].'">Category</option>
-    <option value="'.$sort_array[2].'">Type</option>
-    <option value="'.$sort_array[3].'">State</option>
-    <option value="'.$sort_array[4].'">Status</option>
-</select>
-</form>
-</div>
-'
-*/
+// Search term (from ?q=)
+$search = isset($_GET['q']) ? trim($_GET['q']) : '';
+
+if ($search !== '') {
+    $needle = mysqli_real_escape_string($db, strtolower($search));
+
+    // columns to search (adjust if you want fewer/more)
+    $searchClauses = [
+        "LOWER(name)         LIKE '%{$needle}%'",
+        "LOWER(description)  LIKE '%{$needle}%'",
+        "LOWER(did_you_know) LIKE '%{$needle}%'",
+        "LOWER(category)     LIKE '%{$needle}%'",
+        "LOWER(type)         LIKE '%{$needle}%'",
+        "LOWER(state_name)   LIKE '%{$needle}%'",
+        "LOWER(key_words)    LIKE '%{$needle}%'",
+        "LOWER(status)       LIKE '%{$needle}%'",
+        "LOWER(notes)        LIKE '%{$needle}%'",
+        "LOWER(tag_line)     LIKE '%{$needle}%'"
+    ];
+
+    $searchWhere = '(' . implode(' OR ', $searchClauses) . ')';
+
+    // combine with existing tag filter (if any)
+    if ($where === '') {
+        $where = 'WHERE ' . $searchWhere;
+    } else {
+        $where .= ' AND ' . $searchWhere;
+    }
+}
+
+// sort inputs 
+$sort     = $_GET['sort'] ?? 'ID';
+$allowed  = ['ID'=>'id','Name'=>'name','Category'=>'category','Type'=>'type'];
+if (! array_key_exists($sort, $allowed)) {
+    $sort = 'ID';
+}
+
+$limit  = isset($_GET['limit']) && in_array((int)$_GET['limit'], [10,20,50,75,100])
+          ? (int)$_GET['limit'] : 10;
+$page   = isset($_GET['page'])  && (int)$_GET['page'] > 0
+          ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $limit;
+
+// — sort inputs —
+$sort     = $_GET['sort'] ?? 'ID';
+$allowed  = ['ID'=>'id','Name'=>'name','Category'=>'category','Type'=>'type'];
+if (! array_key_exists($sort, $allowed)) {
+    $sort = 'ID';
+}
+
+$sort_column = $allowed[$sort];
+
+// defaults for reset button
+$defaultLimitParam = '10';
+$defaultSort = 'ID';
+
+// --- limit/page/offset with "all" support ---
+$limitParam   = $_GET['limit'] ?? '10';                 // raw input (string)
+$validLimits  = ['10','20','50','75','100','all'];
+if (!in_array($limitParam, $validLimits, true)) {
+    $limitParam = '10';
+}
+$limitIsAll = ($limitParam === 'all');
+$limit      = $limitIsAll ? null : (int)$limitParam;    // null => no LIMIT later
+
+$page   = isset($_GET['page']) && (int)$_GET['page'] > 0 ? (int)$_GET['page'] : 1;
+$offset = $limitIsAll ? 0 : ($page - 1) * $limit;
+
+// total count for pagination (respect current filter/search)
+$countSql = "SELECT COUNT(*) AS total FROM dresses {$where}";
+$countRes = mysqli_query($db, $countSql);
+$totalRow = mysqli_fetch_assoc($countRes);
+$totalFiltered = (int)$totalRow['total'];
+$totalPages    = $limitIsAll ? 1 : (int)ceil(($totalFiltered ?: 1) / $limit);
+if ($limitIsAll) {
+    $page = 1; // single page when showing all
+}
+
+?>
+
+<!-- header.php included before HTML output -->
+<?php 
+// set page title before including header
+$page_title = 'Project ABCD > Home';
+include('header.php'); 
 ?>
 
 <html>
@@ -49,9 +136,9 @@ echo '<div text-align: left>
     <title>ABCD</title>
     <link href="css/index.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./css/responsive_style.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/responsive_style.css">
 </head>
 
 <body>
@@ -127,17 +214,15 @@ echo '<div text-align: left>
     $all_sheroes = "743,711,476,733,523,677,688,442,319,473,542,731,115,317,763,468,669,739,690,611,742,724,401,112,313,700,686,560,475,326,735,655,668,710,618,714,578,684,626,703,525,547,671,318,725,32,549,722,434,713,405,728,687,698,691,466,751,435,620,760,102,654,695,768,762,470,605,33,750,114,432,429,439,662,119,265,328,673,30,151,101,493,471,689,31,438,732,323,581,538,324,111,761,723,327,582,506,754,409,440,423,678,588,693,734,692,444,320,664,659,276,658,746,709,534,196,548,117,477,518,418,632,720,445,704,407,426,729,437,748,306,752,577,52,701,50,188,206,441,670,330,771,568,321,740,696,427,766,544,679,699,666,716,322,411,755,764,443,491,737,316,601,685,464,492,53,414,110,676,730,663,753,325,415,356,413,420,39,412,660,736,329,575,469,183,717,463,665,702,27,715,410,425,770,726,430,586,583,28,769,697,406,275,314,574,428,235,681,712,772,483,424,462,201,467,29,741,524,631,718,682,680,758,683,738,465,419,674,472,745,520,474,116,431,721,171,484,436,744,759,672,422,767,433,749,502,756,706,478,719,747,757,26,694,765,667";
     $shero_query = "SELECT * FROM dresses WHERE id IN ($all_sheroes)";
     
-    $input = @$_GET['sort'];
-    if (strcmp($input,"shero") == 0){
+
+    $input = $_GET['sort'] ?? '';
+    if ($input === 'shero' || $input === '') {
         $Sort_string = 'name';
-    }else{
-    $Sort_string = $input;
+    } 
+    else {
+        $Sort_string = $input;
     }
 
-    if(empty($Sort_string)) {
-        $Sort_string = 'name';
-    }
-    
     $id_sql = $id_sql. " ORDER BY " .$Sort_string. " ASC";
     $name_sql = $name_sql. " ORDER BY " .$Sort_string. " ASC";
     $pic_sql = $pic_sql. " ORDER BY " .$Sort_string. " ASC";
@@ -177,136 +262,140 @@ echo '<div text-align: left>
         $num_results = mysqli_num_rows($result);
     }
 
-    if($dresses_count > $num_results){
-        $no_of_records_per_page = 1000000;
-    }
-    else{
-        $no_of_records_per_page = $dresses_count;
-    }
+$limitIsAll = ($limitParam === 'all');
+$limit      = $limitIsAll ? null : (int)$limitParam;    // null signals "no LIMIT" later
+
+$page   = isset($_GET['page']) && (int)$_GET['page'] > 0 ? (int)$_GET['page'] : 1;
+$offset = $limitIsAll ? 0 : ($page - 1) * $limit;
+
+// total count for pagination (respect current filter/search)
+$countSql = "SELECT COUNT(*) AS total FROM dresses {$where}";
+$countRes = mysqli_query($db, $countSql);
+$totalRow = mysqli_fetch_assoc($countRes);
+$totalFiltered = (int)$totalRow['total'];
+$totalPages    = $limitIsAll ? 1 : (int)ceil(($totalFiltered ?: 1) / $limit);
+
+// keep page sane when "all"
+if ($limitIsAll) {
+    $page = 1;
+}
+
+// — Data query with ORDER BY id and LIMIT/OFFSET —
+$sql = "
+    SELECT
+        id, name, type, category,
+        state_name, key_words,
+        image_url, status, notes, tag_line
+    FROM dresses
+    {$where}
+    ORDER BY {$sort_column} ASC"
+  . ($limitIsAll ? "" : " LIMIT {$offset}, {$limit}");
+
+$res_data = mysqli_query($db, $sql);
+
+?>
     
-    $total_pages = ceil($num_results / $no_of_records_per_page);
+<h1 class="mainTitle">Welcome to Project ABCD</h1>
+<h2 class="subTitle">A Bite of Culture in Dresses</h2><br>
+<h1 id="section-heading">Select a dress to know more about it</h1><br>
 
-    if (!isset($_GET['page'])) {
-        $page = 1;
-    }
-    else {
-        $page = $_GET['page'];
-        if ($page < 1){
-            $page = 1;
-        } elseif ($page > $total_pages){
-            $page = $total_pages;
-        }
-    }
+<!-- sort block updated -->
+<div class="controlsForm">
 
-    $page_first_result = ($page - 1) * $no_of_records_per_page; 
-    if(strcmp($input,"shero") == 0) {
-        $sort_param = 'name';
-    } else {
-        $sort_param = isset($_GET['sort']) ? $_GET['sort'] : 'id'; // default to 'id' if no sort param is given
-    }
+<!-- SHOW dropdown (preserves current sort) -->
+<form method="get" action="index.php" class="limitForm" style="display:inline-block; margin-right: 1rem;">
+  <label for="limitSelect">Show:</label>
+  <select name="limit" id="limitSelect" class="sortLink" onchange="this.form.submit()">
+      <option value="10"  <?= (!$limitIsAll && $limit === 10)  ? 'selected' : '' ?>>10</option>
+      <option value="20"  <?= (!$limitIsAll && $limit === 20)  ? 'selected' : '' ?>>20</option>
+      <option value="50"  <?= (!$limitIsAll && $limit === 50)  ? 'selected' : '' ?>>50</option>
+      <option value="75"  <?= (!$limitIsAll && $limit === 75)  ? 'selected' : '' ?>>75</option>
+      <option value="100" <?= (!$limitIsAll && $limit === 100) ? 'selected' : '' ?>>100</option>
+      <option value="all" <?= $limitIsAll ? 'selected' : '' ?>>All</option>
+  </select>
 
-   
-    $sql = "SELECT * FROM dresses ORDER BY ".$sort_param." ASC LIMIT " . $page_first_result . ',' . $no_of_records_per_page;
+  <!-- preserve current settings and reset to page 1 -->
+  <input type="hidden" name="sort" value="<?= htmlspecialchars($sort) ?>">
+  <input type="hidden" name="tag"  value="<?= htmlspecialchars($selectedTag) ?>">
+  <input type="hidden" name="q"    value="<?= htmlspecialchars($search) ?>">
+  <input type="hidden" name="page" value="1">
+</form>
 
- 
-   
-    if(isset($_POST["id"])){
-        $sql = "SELECT * FROM dresses ORDER BY id ASC LIMIT " . $page_first_result . ',' . $no_of_records_per_page;
-    }
-    if(strcmp($input,"shero") == 0){
-        $sql = "SELECT * FROM dresses WHERE id IN ($all_sheroes) ORDER BY name ASC LIMIT " . $page_first_result . ',' . $no_of_records_per_page;
-    } else if(isset($_POST["name"])) {
-        $sql = "SELECT * FROM dresses ORDER BY name ASC LIMIT " . $page_first_result . ',' . $no_of_records_per_page;
-    }
-    if(isset($_POST["state"])){
-        $sql = "SELECT * FROM dresses ORDER BY state_name ASC LIMIT " . $page_first_result . ',' . $no_of_records_per_page;
-    }
-    if(isset($_POST["category"])){
-       $sql = "SELECT * FROM dresses ORDER BY category ASC LIMIT " . $page_first_result . ',' . $no_of_records_per_page;
-    }
-    if(isset($_POST["type"])){
-        $sql = "SELECT * FROM dresses ORDER BY type ASC LIMIT " . $page_first_result . ',' . $no_of_records_per_page;
-    }
+<!-- SORT BY links -->
+<details class="dropdown" style="display:inline-block; margin-right:1rem;">
+    <summary class="sortLink">Sort by ▾</summary>
+    <ul class="dropdown-menu">
+        <?php foreach (['ID','Name','Category','Type'] as $opt): ?>
+            <li>
+                <!-- preserve current settings and reset to page 1 -->
+                <a href="?limit=<?= $limit ?>&sort=<?= urlencode($opt) ?>
+                    &tag=<?= urlencode($selectedTag) ?>&q=<?= urlencode($search) ?>&page=1"
+                    class="<?= $sort === $opt ? 'active' : '' ?>"><?= $opt ?>
+                </a>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+</details>
 
+<!--Filter By Tags -->
+<details class="dropdown" style="display:inline-block; margin-right:1rem;">
+    <summary class="sortLink">Filter by ▾</summary>
+    <ul class="dropdown-menu">
+    <!-- preserve current Filter By -->
+    <?php $limitQuery = $limitIsAll ? 'all' : (string)$limit; ?>
+    <li>
+        <a href="?limit=<?= $limitQuery ?>&sort=<?= urlencode($sort) ?>&tag=&q=<?= urlencode($search) ?>&page=1"
+            class="<?= $selectedTag === '' ? 'active' : '' ?>">All</a>
+    </li>
+    <?php foreach ($tags as $tag): ?>
+    <li>
+        <a href="?limit=<?= $limitQuery ?>&sort=<?= urlencode($sort) ?>&tag=<?= urlencode($tag) ?>&q=<?= urlencode($search) ?>&page=1"
+            class="<?= ($selectedTag === $tag) ? 'active' : '' ?>">
+            <?= htmlspecialchars($tag) ?>
+        </a>
+    </li>
+    <?php endforeach; ?>
+    </ul>
+</details>
 
-    $res_data = mysqli_query($db, $sql);
+<!-- PAGINATION LINKS -->
+<span class="pageNavContainer">
+  <?php $limitQuery = $limitIsAll ? 'all' : (string)$limit; ?>
 
-    ?>
-    
-    <h1 class="mainTitle">Welcome to Project ABCD</h1>
-    <h2 class="subTitle">A Bite of Culture in Dresses</h2>
-    <h2 class="selectTitle">Select a dress to know more about it</h2><br>
-    
-    <span class="pageLinksContainer">
-    <span class="dressSorting">
+  <?php if ($page > 1): ?>
+    <a href="?limit=<?= $limitQuery ?>&sort=<?= urlencode($sort) ?>&tag=<?= urlencode($selectedTag) ?>&q=<?= urlencode($search) ?>&page=<?= $page - 1 ?>" class="pageButton">&laquo; Previous</a>
+  <?php endif; ?>
 
-    <form action="index.php" method="get">
-        <button class="sortLink" type="submit" name="sort" value="ID">I.D.</button>
-        <button class="sortLink" type="submit" name="sort" value="name">Name</button>
-        <button class="sortLink" type="submit" name="sort" value="category">Category</button>
-        <button class="sortLink" type="submit" name="sort" value="type">Type</button>
-        <button class="sortLink" type="submit" name="sort" value="state_name">State</button>
-        <button class="sortLink" type="submit" name="sort" value= "shero">Sheroes</button>
-    </form>
+  <!-- Reset to defaults 
+        NOTE: if you want to change the default limit or sort, 
+        change the variables above, listed under 'defaults for reset button'
+   -->
+  <a href="?limit=<?= $defaultLimitParam ?>&sort=<?= urlencode($defaultSort) ?>&tag=&q=&page=1" class="pageButton">Reset</a>
 
-    </span>
-    <span class="pageNavConatiner">
-        <tr class="pageNav">
-            <a class="pageLink pageFirst pageButton" href="?page=1&sort=<?php echo $input; ?>"><< First</a>
-            <td class="<?php if($page <= 1){ echo 'disabled'; } ?>">
-                <a class="pageLink pageMid pageButton" href="<?php if($page <= 1){ echo '#'; } else { echo "?page=".($page - 1). "&sort=".$input; } ?>">Prev</a>
-            </td>
-            <td class="<?php if($page >= $total_pages_sql){ echo 'disabled'; } ?>">
-                <a class="pageLink pageMid pageButton" href="<?php if($page >= $total_pages){ echo '#'; } else { echo "?page=".($page + 1). "&sort=".$input; } ?>">Next</a>
-            </td>
-                <a class="pageLink pageMid pageLast pageButton" href="?page=<?php echo $total_pages; ?>&sort=<?php echo $input; ?>">Last >></a>
-            </tr>
+  <?php if ($page < $totalPages): ?>
+    <a href="?limit=<?= $limitQuery ?>&sort=<?= urlencode($sort) ?>&tag=<?= urlencode($selectedTag) ?>&q=<?= urlencode($search) ?>&page=<?= $page + 1 ?>" class="pageButton">Next &raquo;</a>
+  <?php endif; ?>
 </span>
-</span>
 
-    <?php
+<!-- SEARCH FORM -->
+<form method="get" action="index.php" class="searchForm">
+    <input type="text" name="q" value="<?= htmlspecialchars($search) ?>" placeholder="Search dresses…" class="searchInput">
+    <!-- preserve current settings and reset to page 1 -->
+    <input type="hidden" name="limit" value="<?= $limitIsAll ? 'all' : $limit ?>">
+    <input type="hidden" name="sort"  value="<?= htmlspecialchars($sort) ?>">
+    <input type="hidden" name="tag"   value="<?= htmlspecialchars($selectedTag) ?>">
+    <input type="hidden" name="page"  value="1">
+    <button type="submit" class="sortLink">Search</button>
+    <?php if ($search !== ''): ?>
+        <a href="?limit=<?= $limit ?>&sort=<?= urlencode($sort) ?>&tag=<?= urlencode($selectedTag) ?>&page=1"
+            class="pageButton">Clear</a>
+    <?php endif; ?>
+</form>
 
+</div>
 
-    // === ignore: further optimizations are possible =========
-//     $query = "SELECT * FROM `dresses`";
-    
-// if ($result = mysqli_query($db, $query)) {
+<?php
 
-//     /* fetch associative array */
-//     while ($row = mysqli_fetch_assoc($result)) {
-//         printf ("%s (%s)\n", $row["name"], $row["image_url"]);
-//     }
-//     /* free result set */
-//     mysqli_free_result($result);
-// }
-
-
-
-    //=============================================================================
-    // Step 3: Now, display the dresses in loop 
-    //=============================================================================
-
-    // echo "row count --> " . $row_count;
-    // echo "<br>dresses count --> " . $dresses_count;
-
-   // <image class = 'image' src = $pic> </image>
-/*?>
-   <div id="customerTableView">
-   <table class="display" id="ceremoniesTable" style="width:100%">
-       <div class="table responsive">
-           <thead>
-           <tr>
-               <th>ID</th>
-               <th>Name</th>
-               <th>Category</th>
-               <th>Type</th>
-               <th>State Name </th>
-               <th>Status</th>
-           </tr>
-           </thead> 
-           <tbody>
-           <div> 
-<?php */
     $counter = 0;
     // bootstrap responzive table div wrap
     echo "<div class='table-responsive-lg' id='responsive_table_2'><table id = 'table_2'>";
@@ -342,9 +431,7 @@ echo '<div text-align: left>
     </table></div>
     
 <!--Data Table -->
-<!--<script type="text/javascript" charset="utf8"
-        src="https://editor.datatables.net/extensions/Editor/js/dataTables.editor.min.js"></script> -->
-        <script type="text/javascript" charset="utf8"
+<script type="text/javascript" charset="utf8"
         src="https://code.jquery.com/jquery-3.3.1.js"></script> 
 <script type="text/javascript" charset="utf8"
         src="https://cdn.datatables.net/buttons/1.6.1/js/dataTables.buttons.min.js"></script> 
@@ -389,6 +476,9 @@ echo '<div text-align: left>
 </script>
     </div>
     
+    <footer class="page-footer text-center">
+        <br><p>© Summer 2025 Updated by Team DOLPHIN 🐬</p><br>
+    </footer>
 
 </body>
 

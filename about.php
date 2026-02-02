@@ -6,14 +6,14 @@ if($status == PHP_SESSION_NONE){
 }
 
 include('header.php');
-$page_title = 'Project ABCD > About'; 
+$page_title = 'Project ABCD > About';   
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <title> ABCD About Us </title>
+    <title> ABCD About Us (7.17.25)</title>
     <link href="css/about.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

@@ -1,22 +1,39 @@
-# abcd
+# ABCD  
+**A Bite of Culture in Dresses (ABCD)**
 
-A Bite of Culture in Dresses (ABCD)
+## 🚀 Setup Instructions
 
+Follow these steps to deploy the ABCD web application locally using XAMPP:
 
-[1] Download abcd.zip and deploy into xampp/htdocs/abcd2
-You can download the abcd repo at https://github.com/sjasthi/abcd2
-(Click the green "Download" button and select "Download ZIP" option)
+### 1. 📥 Download the Repository
+Download the `abcd.zip` and extract it to your XAMPP `htdocs` folder:
+- Location: `xampp/htdocs/abcd2`
+- Repository URL: [https://github.com/sjasthi/abcd2](https://github.com/sjasthi/abcd2)
+- Click the green **"Code"** button, then choose **"Download ZIP"**
 
-[2] Launch XAMPP; Start Apache Server and SQL Server; 
+### 2. 🔥 Launch XAMPP
+Start the following services from the XAMPP Control Panel:
+- **Apache Server**
+- **MySQL Server**
 
-[3] Go to SQL Admin panel (phpmyadmin); Create a database called "abcd_db".
+### 3. 🗄️ Create the Database
+- Open **phpMyAdmin** in your browser (usually at [http://localhost/phpmyadmin](http://localhost/phpmyadmin))
+- Create a new database named: `abcd_db`
 
-[4] Import the SQL file (xampp/htdocs/abcd/sql/abcd_db.sql) into abcd_db database.
+### 4. 🧩 Import the SQL File
+- Navigate to `xampp/htdocs/abcd/sql/abcd_db.sql`
+- Import this file into the newly created `abcd_db` database
 
-[5] Launch the abcd application
-http://localhost/abcd2
+### 5. 🌐 Launch the Application
+Open your browser and go to:
+[http://localhost/abcd2](http://localhost/abcd2)
 
-[6] to exercise the admin functionality, you can login using the following user id and password.
+### 6. 🔐 Admin Login
+To access admin features, use the following credentials:
 
-User Name: cs320@silcmn.com
-Password: 12345
+- **Username:** `cs320@silcmn.com`  
+- **Password:** `12345`
+
+---
+
+Enjoy exploring **A Bite of Culture in Dresses (ABCD)**!

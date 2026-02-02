@@ -1,16 +1,22 @@
 <?php 
-    ob_start();
-    session_start();
+// require_once 'bin/debug_config.php'; //uncomment if debugging is needed
 
-    if ($_SESSION['role'] != 'admin'){
-        header('Location:index.php'); 
-    }
+session_start();
 
-    require 'bin/functions.php';
-    require 'db_configuration.php';
-    include('header.php'); 
-    
-    ob_end_flush();
+require 'bin/functions.php';
+require_once 'db_configuration.php';
+
+// admin check and redirect
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    echo "<script>
+            alert('Unauthorized access. Admin privileges are required.');
+            window.location.href = 'loginForm.php';
+          </script>";
+    exit;
+}
+
+$page_title = 'Project ABCD > Admin';
+include('header.php'); 
 ?>
 
 <html>
@@ -32,6 +38,9 @@
             <td><a href="import.php"><i class="fa fa-arrow-down" id="adIconTwo"></i><p class="iconLabel"><strong>import</strong></p></a></td>
             <td><a href="export.php"><i class="fa fa-arrow-up-from-bracket" id="adIconThree"></i><p class="iconLabel"><strong>export</strong></p></a></td>
             <td><a href="exportPDF.php"><i class="fa fa-file-pdf" id="adIconFour"></i><p class="iconLabel"><strong>export pdf</strong></p></a></td>
+                        <!-- celebrations and tags icons added FP2 -->
+            <td><a href="admin_celebrations.php"><i class="fa fa-calendar-check" id="adIconFour"></i><p class="iconLabel"><strong>celebrations</strong></p></a></td>
+            <td><a href="manage_tags.php"><i class="fa fa-tags" id="adIconFour"></i><p class="iconLabel"><strong>tags</strong></p></a></td>
 </tr>
 <tr>
             <td><a href="export_powerpoint_options.php"><i class="fa fa-file-powerpoint" id="adIconFive"></i><p class="iconLabel"><strong>powerpoint</strong></p></a></td>
@@ -49,6 +58,10 @@
         </tr>
     </table>
 </div>
+
+<footer class="page-footer text-center">
+    <br><p>© Summer 2025 [modified by] Team DOLPHIN 🐬</p><br>
+</footer>
      
 </body>
 </html>

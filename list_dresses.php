@@ -1,13 +1,10 @@
 <?php
+// require_once 'bin/debug_config.php'; //uncomment if debugging is needed
 
-if(!isset($_SESSION)) 
-{ 
-    session_start(); 
-} 
+session_start();
 
 require 'bin/functions.php';
-require 'db_configuration.php';
-
+require_once 'db_configuration.php';
 
 //Read cookies for description and did you know length, use defauts if not set.
 $description_length = 1000;
@@ -31,7 +28,6 @@ $GLOBALS['data'] = mysqli_query($db, $query);
 
 ?>
 
-
 <?php $page_title = 'Project ABCD > dresses'; ?>
 
 <?php include('header.php'); 
@@ -41,11 +37,13 @@ $GLOBALS['data'] = mysqli_query($db, $query);
 
 <head>
 <link href="css/list_dresses.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300&display=swap" rel="stylesheet">
   
 </head>
+
+
 
 <!-- Page Content -->
 <br><br>
@@ -223,11 +221,20 @@ $GLOBALS['data'] = mysqli_query($db, $query);
         </table>
     </div>
 </div>
+<!-- csv upload form for admin -->
+<?php if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') { ?>
+    <h1 id="section-heading">Upload CSV to Update Dress Keywords</h1>
+    <form action="upload_dresses_keywords.php" method="POST" enctype="multipart/form-data">
+        <input type="file" name="csvFile" accept=".csv" required>
+        <button type="submit">Upload and Update</button>
+    </form>
+<?php } ?>
 
 <!-- /.container -->
 <!-- Footer -->
 <footer class="page-footer text-center">
     <p>Created for ICS 325 Summer Project "Team Alligators"</p>
+    <p>© Summer 2025 Updated by Team DOLPHIN 🐬</p><br>
 </footer>
 
 <!--JQuery-->
@@ -239,8 +246,7 @@ $GLOBALS['data'] = mysqli_query($db, $query);
         src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
 
 <!--Data Table-->
-<script type="text/javascript" charset="utf8"
-        src="https://editor.datatables.net/extensions/Editor/js/dataTables.editor.min.js"></script>
+<!-- removed DataTables Editor extension as it is paid only -->
 <script type="text/javascript" charset="utf8"
         src="https://code.jquery.com/jquery-3.3.1.js"></script>
 <script type="text/javascript" charset="utf8"

@@ -28,15 +28,29 @@
             </div>
             <div class="shoppingContainer">
                 <div class="col">
-                    <div class="row justify-content-center">   
-                        <h2 class="shopHeader">Click this button to get your copy of SHEROES!</h2>
-                    </div>
-                    <div class="row justify-content-center">  
-                        <button style="margin-top: 10px;" class="btn btn-lg btn-outline-success" type="button" onclick="alert('Coming Soon!')">Get my copy!</button>
-                    </div>
-                    <div class="row justify-content-center">
-                        <img class="sheroCover" src="images/store_images/sheroesbook.png" alt="Sheroes Book Cover">
-                    </div>
+                   
+                        <h2 class="subTitle">Click &#x25B6; <a href="https://bit.ly/order_sheroes" style="text-decoration: none;"><button style="background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+  outline: none;">Get SHEROES</button></a> to order</h2>
+  
+  <br> <br>
+  
+  <div style="text-align: center;">
+    <a href="https://bit.ly/order_sheroes">
+        <img src="https://www.projectabcd.com/images/about_images/sheroes_title.jpg" alt="Description of the image" style="height: 4in; width: 3in;">
+    </a>
+</div>
                 </div>
             </div>
         </div>

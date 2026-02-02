@@ -8,6 +8,16 @@
     text-shadow: 2px 2px 4px #cec6bd;
 }
 
+/* added for smaller heading */
+#section-heading {
+    text-align: left;
+    color: #000080;
+    font-family: 'Kanit', sans-serif;
+    text-transform: none; 
+    font-weight: bold;
+    font-size: 28px;
+}
+
 #toggle {
     color: 	#4397fb;
 }
